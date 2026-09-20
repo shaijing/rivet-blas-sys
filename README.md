@@ -59,6 +59,9 @@ cargo build -F openblas
 
 # Run example
 cargo run --release --example mat_blas
+
+# Run Criterion benchmarks
+cargo bench --bench cblas
 ```
 
 ## Requirements

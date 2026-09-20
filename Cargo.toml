@@ -30,5 +30,12 @@ vcpkg = "0.2.15"
 [build-dependencies]
 pkg-config = "0.3.32"
 
+[dev-dependencies]
+criterion = "0.8.2"
+
+[[bench]]
+name = "cblas"
+harness = false
+
 [package.metadata.docs.rs]
 rustdoc-args = ["--html-in-header", "assets/katex-header.html"]
