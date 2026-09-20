@@ -1,5 +1,5 @@
 [package]
-name = "blas-sys"
+name = "rivet-blas-sys"
 version = "0.1.0"
 edition = "2024"
 license = "Apache-2.0 OR MIT"
@@ -8,8 +8,8 @@ description = "The package provides BLAS bindings for Rust."
 readme = "README.md"
 categories = ["science"]
 keywords = ["linear-algebra", "blas"]
-homepage = "https://github.com/shaijing/blas-rs"
-repository = "https://github.com/shaijing/blas-rs"
+homepage = "https://github.com/shaijing/rivet-blas-sys"
+repository = "https://github.com/shaijing/rivet-blas-sys"
 
 [features]
 default = ["openblas", "ilp64"]

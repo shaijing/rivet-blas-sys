@@ -1,4 +1,4 @@
-//! # blas-sys
+//! # rivet-blas-sys
 //! The packages provides a BLAS binding.
 
 //! ## Configuration
