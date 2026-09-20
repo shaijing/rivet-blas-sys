@@ -2,6 +2,37 @@
 //!
 //! Every declaration in this module binds an actual suffixed MKL symbol and
 //! uses `MKL_INT64`, independent of the ordinary ABI feature.
+//!
+//! # Example
+//!
+//! ```no_run
+//! use rivet_blas_sys::cblas::cblas_level_three_mkl_64::cblas_dgemm_64;
+//! use rivet_blas_sys::cblas::cblas_types::{
+//!     CBlasLayout, CBlasTranspose, MklCBlasInt64,
+//! };
+//!
+//! let a = [1.0_f64, 2.0, 3.0, 4.0];
+//! let b = [5.0_f64, 6.0, 7.0, 8.0];
+//! let mut c = [0.0_f64; 4];
+//! unsafe {
+//!     cblas_dgemm_64(
+//!         CBlasLayout::CBlasRowMajor,
+//!         CBlasTranspose::CBlasNoTrans,
+//!         CBlasTranspose::CBlasNoTrans,
+//!         2 as MklCBlasInt64,
+//!         2 as MklCBlasInt64,
+//!         2 as MklCBlasInt64,
+//!         1.0,
+//!         a.as_ptr(),
+//!         2 as MklCBlasInt64,
+//!         b.as_ptr(),
+//!         2 as MklCBlasInt64,
+//!         0.0,
+//!         c.as_mut_ptr(),
+//!         2 as MklCBlasInt64,
+//!     );
+//! }
+//! ```
 
 use crate::cblas::cblas_types::*;
 
@@ -1247,6 +1278,12 @@ unsafe extern "C" {
         ldb: MklCBlasInt64,
     );
 
+    /// 64-bit MKL half-precision general matrix product:
+    /// `C := alpha * op(A) * op(B) + beta * C`.
+    ///
+    /// # Safety
+    /// All matrix pointers must reference valid storage consistent with the
+    /// dimensions, transpose flags, and leading dimensions.
     pub fn cblas_hgemm_64(
         layout: CBlasLayout,
         transa: CBlasTranspose,
@@ -1264,6 +1301,12 @@ unsafe extern "C" {
         ldc: MklCBlasInt64,
     );
 
+    /// 64-bit MKL out-of-place single-precision triangular matrix product.
+    /// The result is written to `c` while `a` and `b` remain unchanged.
+    ///
+    /// # Safety
+    /// `a`, `b`, and `c` must reference valid matrix storage described by the
+    /// dimensions, flags, and leading dimensions.
     pub fn cblas_strmm_oop_64(
         layout: CBlasLayout,
         side: CBlasSide,
@@ -1281,6 +1324,13 @@ unsafe extern "C" {
         c: *mut CBlasFloat,
         ldc: MklCBlasInt64,
     );
+
+    /// 64-bit MKL out-of-place double-precision triangular matrix product.
+    /// The result is written to `c` while `a` and `b` remain unchanged.
+    ///
+    /// # Safety
+    /// `a`, `b`, and `c` must reference valid matrix storage described by the
+    /// dimensions, flags, and leading dimensions.
     pub fn cblas_dtrmm_oop_64(
         layout: CBlasLayout,
         side: CBlasSide,
@@ -1298,6 +1348,13 @@ unsafe extern "C" {
         c: *mut CBlasDouble,
         ldc: MklCBlasInt64,
     );
+
+    /// 64-bit MKL out-of-place complex single-precision triangular matrix
+    /// product. The result is written to `c` while `a` and `b` remain unchanged.
+    ///
+    /// # Safety
+    /// Complex scalar and matrix pointers must be valid and have compatible
+    /// dimensions and leading dimensions.
     pub fn cblas_ctrmm_oop_64(
         layout: CBlasLayout,
         side: CBlasSide,
@@ -1315,6 +1372,13 @@ unsafe extern "C" {
         c: *mut CBlasVoid,
         ldc: MklCBlasInt64,
     );
+
+    /// 64-bit MKL out-of-place complex double-precision triangular matrix
+    /// product. The result is written to `c` while `a` and `b` remain unchanged.
+    ///
+    /// # Safety
+    /// Complex scalar and matrix pointers must be valid and have compatible
+    /// dimensions and leading dimensions.
     pub fn cblas_ztrmm_oop_64(
         layout: CBlasLayout,
         side: CBlasSide,
@@ -1333,6 +1397,12 @@ unsafe extern "C" {
         ldc: MklCBlasInt64,
     );
 
+    /// 64-bit MKL out-of-place single-precision triangular solve.
+    /// The result is written to `c` while `a` and `b` remain unchanged.
+    ///
+    /// # Safety
+    /// `a`, `b`, and `c` must reference valid matrix storage; `a` must contain
+    /// a non-singular triangular matrix.
     pub fn cblas_strsm_oop_64(
         layout: CBlasLayout,
         side: CBlasSide,
@@ -1350,6 +1420,13 @@ unsafe extern "C" {
         c: *mut CBlasFloat,
         ldc: MklCBlasInt64,
     );
+
+    /// 64-bit MKL out-of-place double-precision triangular solve.
+    /// The result is written to `c` while `a` and `b` remain unchanged.
+    ///
+    /// # Safety
+    /// `a`, `b`, and `c` must reference valid matrix storage; `a` must contain
+    /// a non-singular triangular matrix.
     pub fn cblas_dtrsm_oop_64(
         layout: CBlasLayout,
         side: CBlasSide,
@@ -1367,6 +1444,13 @@ unsafe extern "C" {
         c: *mut CBlasDouble,
         ldc: MklCBlasInt64,
     );
+
+    /// 64-bit MKL out-of-place complex single-precision triangular solve.
+    /// The result is written to `c` while `a` and `b` remain unchanged.
+    ///
+    /// # Safety
+    /// Complex scalar and matrix pointers must be valid; `a` must contain a
+    /// non-singular triangular matrix.
     pub fn cblas_ctrsm_oop_64(
         layout: CBlasLayout,
         side: CBlasSide,
@@ -1384,6 +1468,13 @@ unsafe extern "C" {
         c: *mut CBlasVoid,
         ldc: MklCBlasInt64,
     );
+
+    /// 64-bit MKL out-of-place complex double-precision triangular solve.
+    /// The result is written to `c` while `a` and `b` remain unchanged.
+    ///
+    /// # Safety
+    /// Complex scalar and matrix pointers must be valid; `a` must contain a
+    /// non-singular triangular matrix.
     pub fn cblas_ztrsm_oop_64(
         layout: CBlasLayout,
         side: CBlasSide,

@@ -2,6 +2,20 @@
 //!
 //! Every declaration in this module binds an actual suffixed MKL symbol and
 //! uses `MKL_INT64`/`MKL_UINT64`, independent of the ordinary ABI feature.
+//!
+//! # Example
+//!
+//! ```no_run
+//! use rivet_blas_sys::cblas::cblas_level_one_mkl_64::cblas_ddot_64;
+//! use rivet_blas_sys::cblas::cblas_types::MklCBlasInt64;
+//!
+//! let x = [1.0_f64, 2.0, 3.0];
+//! let y = [4.0_f64, 5.0, 6.0];
+//! let dot = unsafe {
+//!     cblas_ddot_64(3 as MklCBlasInt64, x.as_ptr(), 1, y.as_ptr(), 1)
+//! };
+//! assert_eq!(dot, 32.0);
+//! ```
 
 use crate::cblas::cblas_types::*;
 
@@ -914,6 +928,13 @@ unsafe extern "C" {
         x: *const CBlasVoid,
         incx: MklCBlasInt64,
     ) -> MklCBlasIndex64;
+
+    /// 64-bit MKL variant of [`super::cblas_level_one_mkl::cblas_crot`].
+    /// Applies a complex single-precision plane rotation in place.
+    ///
+    /// # Safety
+    /// `x`, `y`, and `s` must point to valid, sufficiently sized storage, and
+    /// both increments must be non-zero.
     pub fn cblas_crot_64(
         n: MklCBlasInt64,
         x: *mut CBlasVoid,
@@ -924,6 +945,12 @@ unsafe extern "C" {
         s: *const CBlasVoid,
     );
 
+    /// 64-bit MKL variant of [`super::cblas_level_one_mkl::cblas_zrot`].
+    /// Applies a complex double-precision plane rotation in place.
+    ///
+    /// # Safety
+    /// `x`, `y`, and `s` must point to valid, sufficiently sized storage, and
+    /// both increments must be non-zero.
     pub fn cblas_zrot_64(
         n: MklCBlasInt64,
         x: *mut CBlasVoid,
@@ -934,21 +961,48 @@ unsafe extern "C" {
         s: *const CBlasVoid,
     );
 
+    /// Returns the zero-based index of the smallest real single-precision
+    /// element, using MKL's explicit 64-bit integer interface.
+    ///
+    /// # Safety
+    /// `x` must point to at least `n` logically strided elements and `incx`
+    /// must be non-zero.
     pub fn cblas_isamin_64(
         n: MklCBlasInt64,
         x: *const CBlasFloat,
         incx: MklCBlasInt64,
     ) -> MklCBlasIndex64;
+
+    /// Returns the zero-based index of the smallest real double-precision
+    /// element, using MKL's explicit 64-bit integer interface.
+    ///
+    /// # Safety
+    /// `x` must point to at least `n` logically strided elements and `incx`
+    /// must be non-zero.
     pub fn cblas_idamin_64(
         n: MklCBlasInt64,
         x: *const CBlasDouble,
         incx: MklCBlasInt64,
     ) -> MklCBlasIndex64;
+
+    /// Returns the zero-based index of the smallest complex single-precision
+    /// element, using MKL's explicit 64-bit integer interface.
+    ///
+    /// # Safety
+    /// `x` must point to valid complex storage for `n` logically strided
+    /// elements and `incx` must be non-zero.
     pub fn cblas_icamin_64(
         n: MklCBlasInt64,
         x: *const CBlasVoid,
         incx: MklCBlasInt64,
     ) -> MklCBlasIndex64;
+
+    /// Returns the zero-based index of the smallest complex double-precision
+    /// element, using MKL's explicit 64-bit integer interface.
+    ///
+    /// # Safety
+    /// `x` must point to valid complex storage for `n` logically strided
+    /// elements and `incx` must be non-zero.
     pub fn cblas_izamin_64(
         n: MklCBlasInt64,
         x: *const CBlasVoid,
