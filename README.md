@@ -86,7 +86,15 @@ cargo run --release --no-default-features -F intel-mkl -F ilp64 --example mkl_64
 
 # Run Criterion benchmarks
 cargo bench --bench cblas
+
+# Locally render all backend API pages like docs.rs
+DOCS_RS=1 RUSTDOCFLAGS="--cfg docsrs" cargo doc --no-deps --all-features
 ```
+
+docs.rs uses a documentation-only all-feature configuration so feature-gated
+MKL, MKL `_64`, and OpenBLAS/FlexiBLAS modules are visible together. This mode
+does not represent a valid link configuration; normal builds still require
+exactly one ABI and one backend.
 
 ## Requirements
 

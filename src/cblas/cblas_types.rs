@@ -6,6 +6,8 @@
 pub type CBlasInt = ::std::os::raw::c_longlong;
 #[cfg(all(feature = "lp64", not(feature = "ilp64")))]
 pub type CBlasInt = ::std::os::raw::c_int;
+#[cfg(all(docsrs, feature = "ilp64", feature = "lp64"))]
+pub type CBlasInt = ::std::os::raw::c_longlong;
 
 /// Return/index type used by CBLAS (`size_t` for the ordinary MKL API).
 pub type CBlasIndex = usize;

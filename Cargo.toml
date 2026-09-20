@@ -48,4 +48,10 @@ name = "cblas"
 harness = false
 
 [package.metadata.docs.rs]
-rustdoc-args = ["--html-in-header", "assets/katex-header.html"]
+all-features = true
+rustdoc-args = [
+    "--cfg",
+    "docsrs",
+    "--html-in-header",
+    "assets/katex-header.html",
+]

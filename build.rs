@@ -368,6 +368,8 @@ fn build_system() {
 }
 
 fn main() {
+    println!("cargo:rustc-check-cfg=cfg(docsrs)");
+
     // Skip build logic when generating documentation on docs.rs
     if env::var("DOCS_RS").is_ok() {
         return;

@@ -2,6 +2,8 @@
 pub type BlasInt = i64;
 #[cfg(all(feature = "lp64", not(feature = "ilp64")))]
 pub type BlasInt = i32;
+#[cfg(all(docsrs, feature = "ilp64", feature = "lp64"))]
+pub type BlasInt = i64;
 
 pub type BlasIndex = usize;
 pub type BlasFloat = f32;

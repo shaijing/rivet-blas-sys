@@ -66,6 +66,8 @@ cargo fmt --all
 cargo check
 cargo test
 cargo doc --no-deps
+# Render all feature-gated API modules locally, without linking a backend.
+DOCS_RS=1 RUSTDOCFLAGS="--cfg docsrs" cargo doc --no-deps --all-features
 ```
 
 Examples and benchmarks:
@@ -171,5 +173,7 @@ cargo check --examples
 ```
 
 For feature-specific changes, also run the relevant backend test/example and
-documentation command. Verify that `git status` contains only the intended
-changes and that no generated `target/` artifacts are added.
+documentation command. For documentation-only cfg changes, verify that the
+all-feature docs command above exposes every backend module. Verify that
+`git status` contains only the intended changes and that no generated `target/`
+artifacts are added.
