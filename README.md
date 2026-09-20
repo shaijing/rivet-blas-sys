@@ -75,6 +75,15 @@ cargo build -F openblas
 # Run example
 cargo run --release --example mat_blas
 
+# Run common Level 1/2/3 examples
+cargo run --release --example blas_levels
+
+# Run OpenBLAS/FlexiBLAS extensions
+cargo run --release --example openblas_extensions
+
+# Run Intel MKL explicit 64-bit APIs
+cargo run --release --no-default-features -F intel-mkl -F ilp64 --example mkl_64
+
 # Run Criterion benchmarks
 cargo bench --bench cblas
 ```
