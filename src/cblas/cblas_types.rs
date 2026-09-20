@@ -1,9 +1,28 @@
-#[cfg(feature = "ilp64")]
+#[cfg(all(feature = "ilp64", feature = "lp64"))]
+compile_error!("features `ilp64` and `lp64` are mutually exclusive");
+
+#[cfg(not(any(feature = "ilp64", feature = "lp64")))]
+compile_error!("enable exactly one integer ABI feature: `ilp64` or `lp64`");
+
+/// Integer type used by the selected backend's ordinary CBLAS entry points.
+///
+/// `ilp64` maps to `long long` and `lp64` maps to `int`. For Intel MKL this
+/// corresponds to `MKL_INT` with and without `MKL_ILP64`, respectively.
+#[cfg(all(feature = "ilp64", not(feature = "lp64")))]
 pub type CBlasInt = ::std::os::raw::c_longlong;
-#[cfg(feature = "lp64")]
+#[cfg(all(feature = "lp64", not(feature = "ilp64")))]
 pub type CBlasInt = ::std::os::raw::c_int;
 
-pub type CBlasIndex = ::std::os::raw::c_uint;
+/// Return/index type used by CBLAS (`size_t` for the ordinary MKL API).
+pub type CBlasIndex = usize;
+
+/// Integer types used by Intel MKL's explicit `*_64` CBLAS interface.
+///
+/// These aliases are intentionally independent of the `lp64`/`ilp64` feature:
+/// MKL's suffixed interface always uses `MKL_INT64` and `MKL_UINT64`.
+pub type MklCBlasInt64 = ::std::os::raw::c_longlong;
+pub type MklCBlasIndex64 = ::std::os::raw::c_ulonglong;
+
 pub type CBlasFloat = ::std::os::raw::c_float;
 pub type CBlasDouble = ::std::os::raw::c_double;
 pub type CBlasVoid = ::std::os::raw::c_void;
@@ -21,6 +40,8 @@ pub enum CBlasTranspose {
     CBlasNoTrans = 111,
     CBlasTrans = 112,
     CBlasConjTrans = 113,
+    /// FlexiBLAS/OpenBLAS extension for conjugating without transposing.
+    CBlasConjNoTrans = 114,
 }
 
 #[repr(C)]

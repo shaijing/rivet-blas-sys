@@ -1,3 +1,8 @@
+//! Explicit Intel MKL `*_64` Level 3 CBLAS entry points.
+//!
+//! Every declaration in this module binds an actual suffixed MKL symbol and
+//! uses `MKL_INT64`, independent of the ordinary ABI feature.
+
 use crate::cblas::cblas_types::*;
 
 unsafe extern "C" {
@@ -28,21 +33,21 @@ unsafe extern "C" {
     /// * `beta` - Specifies the scalar $\beta$. When zero, $C$ need not be set on entry.
     /// * `c` - Array of size ldc by n. On entry, contains matrix $C$. On exit, overwritten by the result.
     /// * `ldc` - Leading dimension of c. Must be at least $\max(1, m)$.
-    pub fn cblas_sgemm(
+    pub fn cblas_sgemm_64(
         layout: CBlasLayout,
         transa: CBlasTranspose,
         transb: CBlasTranspose,
-        m: CBlasInt,
-        n: CBlasInt,
-        k: CBlasInt,
+        m: MklCBlasInt64,
+        n: MklCBlasInt64,
+        k: MklCBlasInt64,
         alpha: CBlasFloat,
         a: *const CBlasFloat,
-        lda: CBlasInt,
+        lda: MklCBlasInt64,
         b: *const CBlasFloat,
-        ldb: CBlasInt,
+        ldb: MklCBlasInt64,
         beta: CBlasFloat,
         c: *mut CBlasFloat,
-        ldc: CBlasInt,
+        ldc: MklCBlasInt64,
     );
 
     /// The ?gemm routines compute a scalar-matrix-matrix product and add the result to a scalar-matrix product.
@@ -71,21 +76,21 @@ unsafe extern "C" {
     /// * `beta` - Specifies the scalar $\beta$. When zero, $C$ need not be set on entry.
     /// * `c` - Array of size ldc by n. On entry, contains matrix $C$. On exit, overwritten by the result.
     /// * `ldc` - Leading dimension of c. Must be at least $\max(1, m)$.
-    pub fn cblas_dgemm(
+    pub fn cblas_dgemm_64(
         layout: CBlasLayout,
         transa: CBlasTranspose,
         transb: CBlasTranspose,
-        m: CBlasInt,
-        n: CBlasInt,
-        k: CBlasInt,
+        m: MklCBlasInt64,
+        n: MklCBlasInt64,
+        k: MklCBlasInt64,
         alpha: CBlasDouble,
         a: *const CBlasDouble,
-        lda: CBlasInt,
+        lda: MklCBlasInt64,
         b: *const CBlasDouble,
-        ldb: CBlasInt,
+        ldb: MklCBlasInt64,
         beta: CBlasDouble,
         c: *mut CBlasDouble,
-        ldc: CBlasInt,
+        ldc: MklCBlasInt64,
     );
 
     /// The ?gemm routines compute a scalar-matrix-matrix product and add the result to a scalar-matrix product.
@@ -114,21 +119,21 @@ unsafe extern "C" {
     /// * `beta` - Specifies the complex scalar $\beta$. When zero, $C$ need not be set on entry.
     /// * `c` - Array of size ldc by n. On entry, contains matrix $C$. On exit, overwritten by the result.
     /// * `ldc` - Leading dimension of c. Must be at least $\max(1, m)$.
-    pub fn cblas_cgemm(
+    pub fn cblas_cgemm_64(
         layout: CBlasLayout,
         transa: CBlasTranspose,
         transb: CBlasTranspose,
-        m: CBlasInt,
-        n: CBlasInt,
-        k: CBlasInt,
+        m: MklCBlasInt64,
+        n: MklCBlasInt64,
+        k: MklCBlasInt64,
         alpha: *const CBlasVoid,
         a: *const CBlasVoid,
-        lda: CBlasInt,
+        lda: MklCBlasInt64,
         b: *const CBlasVoid,
-        ldb: CBlasInt,
+        ldb: MklCBlasInt64,
         beta: *const CBlasVoid,
         c: *mut CBlasVoid,
-        ldc: CBlasInt,
+        ldc: MklCBlasInt64,
     );
 
     /// The ?gemm routines compute a scalar-matrix-matrix product and add the result to a scalar-matrix product.
@@ -157,21 +162,21 @@ unsafe extern "C" {
     /// * `beta` - Specifies the complex double scalar $\beta$. When zero, $C$ need not be set on entry.
     /// * `c` - Array of size ldc by n. On entry, contains matrix $C$. On exit, overwritten by the result.
     /// * `ldc` - Leading dimension of c. Must be at least $\max(1, m)$.
-    pub fn cblas_zgemm(
+    pub fn cblas_zgemm_64(
         layout: CBlasLayout,
         transa: CBlasTranspose,
         transb: CBlasTranspose,
-        m: CBlasInt,
-        n: CBlasInt,
-        k: CBlasInt,
+        m: MklCBlasInt64,
+        n: MklCBlasInt64,
+        k: MklCBlasInt64,
         alpha: *const CBlasVoid,
         a: *const CBlasVoid,
-        lda: CBlasInt,
+        lda: MklCBlasInt64,
         b: *const CBlasVoid,
-        ldb: CBlasInt,
+        ldb: MklCBlasInt64,
         beta: *const CBlasVoid,
         c: *mut CBlasVoid,
-        ldc: CBlasInt,
+        ldc: MklCBlasInt64,
     );
 
     /// The ?hemm routines compute a scalar-matrix-matrix product and add the result to a scalar-matrix product,
@@ -203,20 +208,20 @@ unsafe extern "C" {
     /// * `beta` - Specifies the complex scalar $\beta$. When zero, $C$ need not be set on entry.
     /// * `c` - Array of size ldc by n. On entry, contains matrix $C$. On exit, overwritten by the result.
     /// * `ldc` - Leading dimension of c. Must be at least $\max(1, m)$.
-    pub fn cblas_chemm(
+    pub fn cblas_chemm_64(
         layout: CBlasLayout,
         side: CBlasSide,
         uplo: CBlasUplo,
-        m: CBlasInt,
-        n: CBlasInt,
+        m: MklCBlasInt64,
+        n: MklCBlasInt64,
         alpha: *const CBlasVoid,
         a: *const CBlasVoid,
-        lda: CBlasInt,
+        lda: MklCBlasInt64,
         b: *const CBlasVoid,
-        ldb: CBlasInt,
+        ldb: MklCBlasInt64,
         beta: *const CBlasVoid,
         c: *mut CBlasVoid,
-        ldc: CBlasInt,
+        ldc: MklCBlasInt64,
     );
 
     /// The ?hemm routines compute a scalar-matrix-matrix product and add the result to a scalar-matrix product,
@@ -248,20 +253,20 @@ unsafe extern "C" {
     /// * `beta` - Specifies the complex double scalar $\beta$. When zero, $C$ need not be set on entry.
     /// * `c` - Array of size ldc by n. On entry, contains matrix $C$. On exit, overwritten by the result.
     /// * `ldc` - Leading dimension of c. Must be at least $\max(1, m)$.
-    pub fn cblas_zhemm(
+    pub fn cblas_zhemm_64(
         layout: CBlasLayout,
         side: CBlasSide,
         uplo: CBlasUplo,
-        m: CBlasInt,
-        n: CBlasInt,
+        m: MklCBlasInt64,
+        n: MklCBlasInt64,
         alpha: *const CBlasVoid,
         a: *const CBlasVoid,
-        lda: CBlasInt,
+        lda: MklCBlasInt64,
         b: *const CBlasVoid,
-        ldb: CBlasInt,
+        ldb: MklCBlasInt64,
         beta: *const CBlasVoid,
         c: *mut CBlasVoid,
-        ldc: CBlasInt,
+        ldc: MklCBlasInt64,
     );
 
     /// The ?herk routines perform a rank-k update of a Hermitian matrix. The operation is defined as
@@ -291,18 +296,18 @@ unsafe extern "C" {
     /// * `beta` - Specifies the real scalar $\beta$. When zero, $C$ need not be set on entry.
     /// * `c` - Array of size ldc by n. On entry, contains the Hermitian matrix $C$. On exit, overwritten by the result.
     /// * `ldc` - Leading dimension of c. Must be at least $\max(1, n)$.
-    pub fn cblas_cherk(
+    pub fn cblas_cherk_64(
         layout: CBlasLayout,
         uplo: CBlasUplo,
         trans: CBlasTranspose,
-        n: CBlasInt,
-        k: CBlasInt,
+        n: MklCBlasInt64,
+        k: MklCBlasInt64,
         alpha: CBlasFloat,
         a: *const CBlasVoid,
-        lda: CBlasInt,
+        lda: MklCBlasInt64,
         beta: CBlasFloat,
         c: *mut CBlasVoid,
-        ldc: CBlasInt,
+        ldc: MklCBlasInt64,
     );
 
     /// The ?herk routines perform a rank-k update of a Hermitian matrix. The operation is defined as
@@ -332,18 +337,18 @@ unsafe extern "C" {
     /// * `beta` - Specifies the real scalar $\beta$. When zero, $C$ need not be set on entry.
     /// * `c` - Array of size ldc by n. On entry, contains the Hermitian matrix $C$. On exit, overwritten by the result.
     /// * `ldc` - Leading dimension of c. Must be at least $\max(1, n)$.
-    pub fn cblas_zherk(
+    pub fn cblas_zherk_64(
         layout: CBlasLayout,
         uplo: CBlasUplo,
         trans: CBlasTranspose,
-        n: CBlasInt,
-        k: CBlasInt,
+        n: MklCBlasInt64,
+        k: MklCBlasInt64,
         alpha: CBlasDouble,
         a: *const CBlasVoid,
-        lda: CBlasInt,
+        lda: MklCBlasInt64,
         beta: CBlasDouble,
         c: *mut CBlasVoid,
-        ldc: CBlasInt,
+        ldc: MklCBlasInt64,
     );
 
     /// The ?her2k routines perform a rank-2k update of a Hermitian matrix. The operation is defined as
@@ -373,20 +378,20 @@ unsafe extern "C" {
     /// * `beta` - Specifies the real scalar $\beta$. When zero, $C$ need not be set on entry.
     /// * `c` - Array of size ldc by n. On entry, contains the Hermitian matrix $C$. On exit, overwritten by the result.
     /// * `ldc` - Leading dimension of c. Must be at least $\max(1, n)$.
-    pub fn cblas_cher2k(
+    pub fn cblas_cher2k_64(
         layout: CBlasLayout,
         uplo: CBlasUplo,
         trans: CBlasTranspose,
-        n: CBlasInt,
-        k: CBlasInt,
+        n: MklCBlasInt64,
+        k: MklCBlasInt64,
         alpha: *const CBlasVoid,
         a: *const CBlasVoid,
-        lda: CBlasInt,
+        lda: MklCBlasInt64,
         b: *const CBlasVoid,
-        ldb: CBlasInt,
+        ldb: MklCBlasInt64,
         beta: CBlasFloat,
         c: *mut CBlasVoid,
-        ldc: CBlasInt,
+        ldc: MklCBlasInt64,
     );
 
     /// The ?her2k routines perform a rank-2k update of a Hermitian matrix. The operation is defined as
@@ -416,20 +421,20 @@ unsafe extern "C" {
     /// * `beta` - Specifies the real scalar $\beta$. When zero, $C$ need not be set on entry.
     /// * `c` - Array of size ldc by n. On entry, contains the Hermitian matrix $C$. On exit, overwritten by the result.
     /// * `ldc` - Leading dimension of c. Must be at least $\max(1, n)$.
-    pub fn cblas_zher2k(
+    pub fn cblas_zher2k_64(
         layout: CBlasLayout,
         uplo: CBlasUplo,
         trans: CBlasTranspose,
-        n: CBlasInt,
-        k: CBlasInt,
+        n: MklCBlasInt64,
+        k: MklCBlasInt64,
         alpha: *const CBlasVoid,
         a: *const CBlasVoid,
-        lda: CBlasInt,
+        lda: MklCBlasInt64,
         b: *const CBlasVoid,
-        ldb: CBlasInt,
+        ldb: MklCBlasInt64,
         beta: CBlasDouble,
         c: *mut CBlasVoid,
-        ldc: CBlasInt,
+        ldc: MklCBlasInt64,
     );
 
     /// The ?symm routines compute a scalar-matrix-matrix product and add the result to a scalar-matrix product,
@@ -457,20 +462,20 @@ unsafe extern "C" {
     /// * `beta` - Specifies the scalar $\beta$. When zero, $C$ need not be set on entry.
     /// * `c` - Array of size ldc by n. On entry, contains matrix $C$. On exit, overwritten by the result.
     /// * `ldc` - Leading dimension of c. Must be at least $\max(1, m)$.
-    pub fn cblas_ssymm(
+    pub fn cblas_ssymm_64(
         layout: CBlasLayout,
         side: CBlasSide,
         uplo: CBlasUplo,
-        m: CBlasInt,
-        n: CBlasInt,
+        m: MklCBlasInt64,
+        n: MklCBlasInt64,
         alpha: CBlasFloat,
         a: *const CBlasFloat,
-        lda: CBlasInt,
+        lda: MklCBlasInt64,
         b: *const CBlasFloat,
-        ldb: CBlasInt,
+        ldb: MklCBlasInt64,
         beta: CBlasFloat,
         c: *mut CBlasFloat,
-        ldc: CBlasInt,
+        ldc: MklCBlasInt64,
     );
 
     /// The ?symm routines compute a scalar-matrix-matrix product and add the result to a scalar-matrix product,
@@ -498,20 +503,20 @@ unsafe extern "C" {
     /// * `beta` - Specifies the scalar $\beta$. When zero, $C$ need not be set on entry.
     /// * `c` - Array of size ldc by n. On entry, contains matrix $C$. On exit, overwritten by the result.
     /// * `ldc` - Leading dimension of c. Must be at least $\max(1, m)$.
-    pub fn cblas_dsymm(
+    pub fn cblas_dsymm_64(
         layout: CBlasLayout,
         side: CBlasSide,
         uplo: CBlasUplo,
-        m: CBlasInt,
-        n: CBlasInt,
+        m: MklCBlasInt64,
+        n: MklCBlasInt64,
         alpha: CBlasDouble,
         a: *const CBlasDouble,
-        lda: CBlasInt,
+        lda: MklCBlasInt64,
         b: *const CBlasDouble,
-        ldb: CBlasInt,
+        ldb: MklCBlasInt64,
         beta: CBlasDouble,
         c: *mut CBlasDouble,
-        ldc: CBlasInt,
+        ldc: MklCBlasInt64,
     );
 
     /// The ?symm routines compute a scalar-matrix-matrix product and add the result to a scalar-matrix product,
@@ -539,20 +544,20 @@ unsafe extern "C" {
     /// * `beta` - Specifies the complex scalar $\beta$. When zero, $C$ need not be set on entry.
     /// * `c` - Array of size ldc by n. On entry, contains matrix $C$. On exit, overwritten by the result.
     /// * `ldc` - Leading dimension of c. Must be at least $\max(1, m)$.
-    pub fn cblas_csymm(
+    pub fn cblas_csymm_64(
         layout: CBlasLayout,
         side: CBlasSide,
         uplo: CBlasUplo,
-        m: CBlasInt,
-        n: CBlasInt,
+        m: MklCBlasInt64,
+        n: MklCBlasInt64,
         alpha: *const CBlasVoid,
         a: *const CBlasVoid,
-        lda: CBlasInt,
+        lda: MklCBlasInt64,
         b: *const CBlasVoid,
-        ldb: CBlasInt,
+        ldb: MklCBlasInt64,
         beta: *const CBlasVoid,
         c: *mut CBlasVoid,
-        ldc: CBlasInt,
+        ldc: MklCBlasInt64,
     );
 
     /// The ?symm routines compute a scalar-matrix-matrix product and add the result to a scalar-matrix product,
@@ -580,20 +585,20 @@ unsafe extern "C" {
     /// * `beta` - Specifies the complex double scalar $\beta$. When zero, $C$ need not be set on entry.
     /// * `c` - Array of size ldc by n. On entry, contains matrix $C$. On exit, overwritten by the result.
     /// * `ldc` - Leading dimension of c. Must be at least $\max(1, m)$.
-    pub fn cblas_zsymm(
+    pub fn cblas_zsymm_64(
         layout: CBlasLayout,
         side: CBlasSide,
         uplo: CBlasUplo,
-        m: CBlasInt,
-        n: CBlasInt,
+        m: MklCBlasInt64,
+        n: MklCBlasInt64,
         alpha: *const CBlasVoid,
         a: *const CBlasVoid,
-        lda: CBlasInt,
+        lda: MklCBlasInt64,
         b: *const CBlasVoid,
-        ldb: CBlasInt,
+        ldb: MklCBlasInt64,
         beta: *const CBlasVoid,
         c: *mut CBlasVoid,
-        ldc: CBlasInt,
+        ldc: MklCBlasInt64,
     );
 
     /// The ?syrk routines perform a rank-k update of a symmetric matrix. The operation is defined as
@@ -621,18 +626,18 @@ unsafe extern "C" {
     /// * `beta` - Specifies the scalar $\beta$. When zero, $C$ need not be set on entry.
     /// * `c` - Array of size ldc by n. On entry, contains the symmetric matrix $C$. On exit, overwritten by the result.
     /// * `ldc` - Leading dimension of c. Must be at least $\max(1, n)$.
-    pub fn cblas_ssyrk(
+    pub fn cblas_ssyrk_64(
         layout: CBlasLayout,
         uplo: CBlasUplo,
         trans: CBlasTranspose,
-        n: CBlasInt,
-        k: CBlasInt,
+        n: MklCBlasInt64,
+        k: MklCBlasInt64,
         alpha: CBlasFloat,
         a: *const CBlasFloat,
-        lda: CBlasInt,
+        lda: MklCBlasInt64,
         beta: CBlasFloat,
         c: *mut CBlasFloat,
-        ldc: CBlasInt,
+        ldc: MklCBlasInt64,
     );
 
     /// The ?syrk routines perform a rank-k update of a symmetric matrix. The operation is defined as
@@ -660,18 +665,18 @@ unsafe extern "C" {
     /// * `beta` - Specifies the scalar $\beta$. When zero, $C$ need not be set on entry.
     /// * `c` - Array of size ldc by n. On entry, contains the symmetric matrix $C$. On exit, overwritten by the result.
     /// * `ldc` - Leading dimension of c. Must be at least $\max(1, n)$.
-    pub fn cblas_dsyrk(
+    pub fn cblas_dsyrk_64(
         layout: CBlasLayout,
         uplo: CBlasUplo,
         trans: CBlasTranspose,
-        n: CBlasInt,
-        k: CBlasInt,
+        n: MklCBlasInt64,
+        k: MklCBlasInt64,
         alpha: CBlasDouble,
         a: *const CBlasDouble,
-        lda: CBlasInt,
+        lda: MklCBlasInt64,
         beta: CBlasDouble,
         c: *mut CBlasDouble,
-        ldc: CBlasInt,
+        ldc: MklCBlasInt64,
     );
 
     /// The ?syrk routines perform a rank-k update of a symmetric matrix. The operation is defined as
@@ -697,18 +702,18 @@ unsafe extern "C" {
     /// * `beta` - Specifies the complex scalar $\beta$. When zero, $C$ need not be set on entry.
     /// * `c` - Array of size ldc by n. On entry, contains the symmetric matrix $C$. On exit, overwritten by the result.
     /// * `ldc` - Leading dimension of c. Must be at least $\max(1, n)$.
-    pub fn cblas_csyrk(
+    pub fn cblas_csyrk_64(
         layout: CBlasLayout,
         uplo: CBlasUplo,
         trans: CBlasTranspose,
-        n: CBlasInt,
-        k: CBlasInt,
+        n: MklCBlasInt64,
+        k: MklCBlasInt64,
         alpha: *const CBlasVoid,
         a: *const CBlasVoid,
-        lda: CBlasInt,
+        lda: MklCBlasInt64,
         beta: *const CBlasVoid,
         c: *mut CBlasVoid,
-        ldc: CBlasInt,
+        ldc: MklCBlasInt64,
     );
 
     /// The ?syrk routines perform a rank-k update of a symmetric matrix. The operation is defined as
@@ -734,18 +739,18 @@ unsafe extern "C" {
     /// * `beta` - Specifies the complex double scalar $\beta$. When zero, $C$ need not be set on entry.
     /// * `c` - Array of size ldc by n. On entry, contains the symmetric matrix $C$. On exit, overwritten by the result.
     /// * `ldc` - Leading dimension of c. Must be at least $\max(1, n)$.
-    pub fn cblas_zsyrk(
+    pub fn cblas_zsyrk_64(
         layout: CBlasLayout,
         uplo: CBlasUplo,
         trans: CBlasTranspose,
-        n: CBlasInt,
-        k: CBlasInt,
+        n: MklCBlasInt64,
+        k: MklCBlasInt64,
         alpha: *const CBlasVoid,
         a: *const CBlasVoid,
-        lda: CBlasInt,
+        lda: MklCBlasInt64,
         beta: *const CBlasVoid,
         c: *mut CBlasVoid,
-        ldc: CBlasInt,
+        ldc: MklCBlasInt64,
     );
 
     /// The ?syr2k routines perform a rank-2k update of a symmetric matrix. The operation is defined as
@@ -773,20 +778,20 @@ unsafe extern "C" {
     /// * `beta` - Specifies the scalar $\beta$. When zero, $C$ need not be set on entry.
     /// * `c` - Array of size ldc by n. On entry, contains the symmetric matrix $C$. On exit, overwritten by the result.
     /// * `ldc` - Leading dimension of c. Must be at least $\max(1, n)$.
-    pub fn cblas_ssyr2k(
+    pub fn cblas_ssyr2k_64(
         layout: CBlasLayout,
         uplo: CBlasUplo,
         trans: CBlasTranspose,
-        n: CBlasInt,
-        k: CBlasInt,
+        n: MklCBlasInt64,
+        k: MklCBlasInt64,
         alpha: CBlasFloat,
         a: *const CBlasFloat,
-        lda: CBlasInt,
+        lda: MklCBlasInt64,
         b: *const CBlasFloat,
-        ldb: CBlasInt,
+        ldb: MklCBlasInt64,
         beta: CBlasFloat,
         c: *mut CBlasFloat,
-        ldc: CBlasInt,
+        ldc: MklCBlasInt64,
     );
 
     /// The ?syr2k routines perform a rank-2k update of a symmetric matrix. The operation is defined as
@@ -814,20 +819,20 @@ unsafe extern "C" {
     /// * `beta` - Specifies the scalar $\beta$. When zero, $C$ need not be set on entry.
     /// * `c` - Array of size ldc by n. On entry, contains the symmetric matrix $C$. On exit, overwritten by the result.
     /// * `ldc` - Leading dimension of c. Must be at least $\max(1, n)$.
-    pub fn cblas_dsyr2k(
+    pub fn cblas_dsyr2k_64(
         layout: CBlasLayout,
         uplo: CBlasUplo,
         trans: CBlasTranspose,
-        n: CBlasInt,
-        k: CBlasInt,
+        n: MklCBlasInt64,
+        k: MklCBlasInt64,
         alpha: CBlasDouble,
         a: *const CBlasDouble,
-        lda: CBlasInt,
+        lda: MklCBlasInt64,
         b: *const CBlasDouble,
-        ldb: CBlasInt,
+        ldb: MklCBlasInt64,
         beta: CBlasDouble,
         c: *mut CBlasDouble,
-        ldc: CBlasInt,
+        ldc: MklCBlasInt64,
     );
 
     /// The ?syr2k routines perform a rank-2k update of a symmetric matrix. The operation is defined as
@@ -855,20 +860,20 @@ unsafe extern "C" {
     /// * `beta` - Specifies the complex scalar $\beta$. When zero, $C$ need not be set on entry.
     /// * `c` - Array of size ldc by n. On entry, contains the symmetric matrix $C$. On exit, overwritten by the result.
     /// * `ldc` - Leading dimension of c. Must be at least $\max(1, n)$.
-    pub fn cblas_csyr2k(
+    pub fn cblas_csyr2k_64(
         layout: CBlasLayout,
         uplo: CBlasUplo,
         trans: CBlasTranspose,
-        n: CBlasInt,
-        k: CBlasInt,
+        n: MklCBlasInt64,
+        k: MklCBlasInt64,
         alpha: *const CBlasVoid,
         a: *const CBlasVoid,
-        lda: CBlasInt,
+        lda: MklCBlasInt64,
         b: *const CBlasVoid,
-        ldb: CBlasInt,
+        ldb: MklCBlasInt64,
         beta: *const CBlasVoid,
         c: *mut CBlasVoid,
-        ldc: CBlasInt,
+        ldc: MklCBlasInt64,
     );
 
     /// The ?syr2k routines perform a rank-2k update of a symmetric matrix. The operation is defined as
@@ -896,20 +901,20 @@ unsafe extern "C" {
     /// * `beta` - Specifies the complex double scalar $\beta$. When zero, $C$ need not be set on entry.
     /// * `c` - Array of size ldc by n. On entry, contains the symmetric matrix $C$. On exit, overwritten by the result.
     /// * `ldc` - Leading dimension of c. Must be at least $\max(1, n)$.
-    pub fn cblas_zsyr2k(
+    pub fn cblas_zsyr2k_64(
         layout: CBlasLayout,
         uplo: CBlasUplo,
         trans: CBlasTranspose,
-        n: CBlasInt,
-        k: CBlasInt,
+        n: MklCBlasInt64,
+        k: MklCBlasInt64,
         alpha: *const CBlasVoid,
         a: *const CBlasVoid,
-        lda: CBlasInt,
+        lda: MklCBlasInt64,
         b: *const CBlasVoid,
-        ldb: CBlasInt,
+        ldb: MklCBlasInt64,
         beta: *const CBlasVoid,
         c: *mut CBlasVoid,
-        ldc: CBlasInt,
+        ldc: MklCBlasInt64,
     );
 
     /// The ?trmm routines compute a scalar-matrix product where one of the matrices is triangular.
@@ -942,19 +947,19 @@ unsafe extern "C" {
     /// * `lda` - Leading dimension of a.
     /// * `b` - Array of size ldb by n. On entry, contains matrix $B$. On exit, overwritten by the result.
     /// * `ldb` - Leading dimension of b. Must be at least $\max(1, m)$.
-    pub fn cblas_strmm(
+    pub fn cblas_strmm_64(
         layout: CBlasLayout,
         side: CBlasSide,
         uplo: CBlasUplo,
         transa: CBlasTranspose,
         diag: CBlasDiag,
-        m: CBlasInt,
-        n: CBlasInt,
+        m: MklCBlasInt64,
+        n: MklCBlasInt64,
         alpha: CBlasFloat,
         a: *const CBlasFloat,
-        lda: CBlasInt,
+        lda: MklCBlasInt64,
         b: *mut CBlasFloat,
-        ldb: CBlasInt,
+        ldb: MklCBlasInt64,
     );
 
     /// The ?trmm routines compute a scalar-matrix product where one of the matrices is triangular.
@@ -982,19 +987,19 @@ unsafe extern "C" {
     /// * `lda` - Leading dimension of a.
     /// * `b` - Array of size ldb by n. On entry, contains matrix $B$. On exit, overwritten by the result.
     /// * `ldb` - Leading dimension of b. Must be at least $\max(1, m)$.
-    pub fn cblas_dtrmm(
+    pub fn cblas_dtrmm_64(
         layout: CBlasLayout,
         side: CBlasSide,
         uplo: CBlasUplo,
         transa: CBlasTranspose,
         diag: CBlasDiag,
-        m: CBlasInt,
-        n: CBlasInt,
+        m: MklCBlasInt64,
+        n: MklCBlasInt64,
         alpha: CBlasDouble,
         a: *const CBlasDouble,
-        lda: CBlasInt,
+        lda: MklCBlasInt64,
         b: *mut CBlasDouble,
-        ldb: CBlasInt,
+        ldb: MklCBlasInt64,
     );
 
     /// The ?trmm routines compute a scalar-matrix product where one of the matrices is triangular.
@@ -1022,19 +1027,19 @@ unsafe extern "C" {
     /// * `lda` - Leading dimension of a.
     /// * `b` - Array of size ldb by n. On entry, contains matrix $B$. On exit, overwritten by the result.
     /// * `ldb` - Leading dimension of b. Must be at least $\max(1, m)$.
-    pub fn cblas_ctrmm(
+    pub fn cblas_ctrmm_64(
         layout: CBlasLayout,
         side: CBlasSide,
         uplo: CBlasUplo,
         transa: CBlasTranspose,
         diag: CBlasDiag,
-        m: CBlasInt,
-        n: CBlasInt,
+        m: MklCBlasInt64,
+        n: MklCBlasInt64,
         alpha: *const CBlasVoid,
         a: *const CBlasVoid,
-        lda: CBlasInt,
+        lda: MklCBlasInt64,
         b: *mut CBlasVoid,
-        ldb: CBlasInt,
+        ldb: MklCBlasInt64,
     );
 
     /// The ?trmm routines compute a scalar-matrix product where one of the matrices is triangular.
@@ -1062,19 +1067,19 @@ unsafe extern "C" {
     /// * `lda` - Leading dimension of a.
     /// * `b` - Array of size ldb by n. On entry, contains matrix $B$. On exit, overwritten by the result.
     /// * `ldb` - Leading dimension of b. Must be at least $\max(1, m)$.
-    pub fn cblas_ztrmm(
+    pub fn cblas_ztrmm_64(
         layout: CBlasLayout,
         side: CBlasSide,
         uplo: CBlasUplo,
         transa: CBlasTranspose,
         diag: CBlasDiag,
-        m: CBlasInt,
-        n: CBlasInt,
+        m: MklCBlasInt64,
+        n: MklCBlasInt64,
         alpha: *const CBlasVoid,
         a: *const CBlasVoid,
-        lda: CBlasInt,
+        lda: MklCBlasInt64,
         b: *mut CBlasVoid,
-        ldb: CBlasInt,
+        ldb: MklCBlasInt64,
     );
 
     /// The ?trsm routines solve a triangular matrix equation. The operation is defined as
@@ -1107,19 +1112,19 @@ unsafe extern "C" {
     /// * `lda` - Leading dimension of a.
     /// * `b` - Array of size ldb by n. On entry, contains the right-hand side matrix $B$. On exit, overwritten by the solution matrix $X$.
     /// * `ldb` - Leading dimension of b. Must be at least $\max(1, m)$.
-    pub fn cblas_strsm(
+    pub fn cblas_strsm_64(
         layout: CBlasLayout,
         side: CBlasSide,
         uplo: CBlasUplo,
         transa: CBlasTranspose,
         diag: CBlasDiag,
-        m: CBlasInt,
-        n: CBlasInt,
+        m: MklCBlasInt64,
+        n: MklCBlasInt64,
         alpha: CBlasFloat,
         a: *const CBlasFloat,
-        lda: CBlasInt,
+        lda: MklCBlasInt64,
         b: *mut CBlasFloat,
-        ldb: CBlasInt,
+        ldb: MklCBlasInt64,
     );
 
     /// The ?trsm routines solve a triangular matrix equation. The operation is defined as
@@ -1147,19 +1152,19 @@ unsafe extern "C" {
     /// * `lda` - Leading dimension of a.
     /// * `b` - Array of size ldb by n. On entry, contains the right-hand side matrix $B$. On exit, overwritten by the solution matrix $X$.
     /// * `ldb` - Leading dimension of b. Must be at least $\max(1, m)$.
-    pub fn cblas_dtrsm(
+    pub fn cblas_dtrsm_64(
         layout: CBlasLayout,
         side: CBlasSide,
         uplo: CBlasUplo,
         transa: CBlasTranspose,
         diag: CBlasDiag,
-        m: CBlasInt,
-        n: CBlasInt,
+        m: MklCBlasInt64,
+        n: MklCBlasInt64,
         alpha: CBlasDouble,
         a: *const CBlasDouble,
-        lda: CBlasInt,
+        lda: MklCBlasInt64,
         b: *mut CBlasDouble,
-        ldb: CBlasInt,
+        ldb: MklCBlasInt64,
     );
 
     /// The ?trsm routines solve a triangular matrix equation. The operation is defined as
@@ -1187,19 +1192,19 @@ unsafe extern "C" {
     /// * `lda` - Leading dimension of a.
     /// * `b` - Array of size ldb by n. On entry, contains the right-hand side matrix $B$. On exit, overwritten by the solution matrix $X$.
     /// * `ldb` - Leading dimension of b. Must be at least $\max(1, m)$.
-    pub fn cblas_ctrsm(
+    pub fn cblas_ctrsm_64(
         layout: CBlasLayout,
         side: CBlasSide,
         uplo: CBlasUplo,
         transa: CBlasTranspose,
         diag: CBlasDiag,
-        m: CBlasInt,
-        n: CBlasInt,
+        m: MklCBlasInt64,
+        n: MklCBlasInt64,
         alpha: *const CBlasVoid,
         a: *const CBlasVoid,
-        lda: CBlasInt,
+        lda: MklCBlasInt64,
         b: *mut CBlasVoid,
-        ldb: CBlasInt,
+        ldb: MklCBlasInt64,
     );
 
     /// The ?trsm routines solve a triangular matrix equation. The operation is defined as
@@ -1227,19 +1232,174 @@ unsafe extern "C" {
     /// * `lda` - Leading dimension of a.
     /// * `b` - Array of size ldb by n. On entry, contains the right-hand side matrix $B$. On exit, overwritten by the solution matrix $X$.
     /// * `ldb` - Leading dimension of b. Must be at least $\max(1, m)$.
-    pub fn cblas_ztrsm(
+    pub fn cblas_ztrsm_64(
         layout: CBlasLayout,
         side: CBlasSide,
         uplo: CBlasUplo,
         transa: CBlasTranspose,
         diag: CBlasDiag,
-        m: CBlasInt,
-        n: CBlasInt,
+        m: MklCBlasInt64,
+        n: MklCBlasInt64,
         alpha: *const CBlasVoid,
         a: *const CBlasVoid,
-        lda: CBlasInt,
+        lda: MklCBlasInt64,
         b: *mut CBlasVoid,
-        ldb: CBlasInt,
+        ldb: MklCBlasInt64,
+    );
+
+    pub fn cblas_hgemm_64(
+        layout: CBlasLayout,
+        transa: CBlasTranspose,
+        transb: CBlasTranspose,
+        m: MklCBlasInt64,
+        n: MklCBlasInt64,
+        k: MklCBlasInt64,
+        alpha: CBlasF16,
+        a: *const CBlasF16,
+        lda: MklCBlasInt64,
+        b: *const CBlasF16,
+        ldb: MklCBlasInt64,
+        beta: CBlasF16,
+        c: *mut CBlasF16,
+        ldc: MklCBlasInt64,
+    );
+
+    pub fn cblas_strmm_oop_64(
+        layout: CBlasLayout,
+        side: CBlasSide,
+        uplo: CBlasUplo,
+        transa: CBlasTranspose,
+        diag: CBlasDiag,
+        m: MklCBlasInt64,
+        n: MklCBlasInt64,
+        alpha: CBlasFloat,
+        a: *const CBlasFloat,
+        lda: MklCBlasInt64,
+        b: *const CBlasFloat,
+        ldb: MklCBlasInt64,
+        beta: CBlasFloat,
+        c: *mut CBlasFloat,
+        ldc: MklCBlasInt64,
+    );
+    pub fn cblas_dtrmm_oop_64(
+        layout: CBlasLayout,
+        side: CBlasSide,
+        uplo: CBlasUplo,
+        transa: CBlasTranspose,
+        diag: CBlasDiag,
+        m: MklCBlasInt64,
+        n: MklCBlasInt64,
+        alpha: CBlasDouble,
+        a: *const CBlasDouble,
+        lda: MklCBlasInt64,
+        b: *const CBlasDouble,
+        ldb: MklCBlasInt64,
+        beta: CBlasDouble,
+        c: *mut CBlasDouble,
+        ldc: MklCBlasInt64,
+    );
+    pub fn cblas_ctrmm_oop_64(
+        layout: CBlasLayout,
+        side: CBlasSide,
+        uplo: CBlasUplo,
+        transa: CBlasTranspose,
+        diag: CBlasDiag,
+        m: MklCBlasInt64,
+        n: MklCBlasInt64,
+        alpha: *const CBlasVoid,
+        a: *const CBlasVoid,
+        lda: MklCBlasInt64,
+        b: *const CBlasVoid,
+        ldb: MklCBlasInt64,
+        beta: *const CBlasVoid,
+        c: *mut CBlasVoid,
+        ldc: MklCBlasInt64,
+    );
+    pub fn cblas_ztrmm_oop_64(
+        layout: CBlasLayout,
+        side: CBlasSide,
+        uplo: CBlasUplo,
+        transa: CBlasTranspose,
+        diag: CBlasDiag,
+        m: MklCBlasInt64,
+        n: MklCBlasInt64,
+        alpha: *const CBlasVoid,
+        a: *const CBlasVoid,
+        lda: MklCBlasInt64,
+        b: *const CBlasVoid,
+        ldb: MklCBlasInt64,
+        beta: *const CBlasVoid,
+        c: *mut CBlasVoid,
+        ldc: MklCBlasInt64,
+    );
+
+    pub fn cblas_strsm_oop_64(
+        layout: CBlasLayout,
+        side: CBlasSide,
+        uplo: CBlasUplo,
+        transa: CBlasTranspose,
+        diag: CBlasDiag,
+        m: MklCBlasInt64,
+        n: MklCBlasInt64,
+        alpha: CBlasFloat,
+        a: *const CBlasFloat,
+        lda: MklCBlasInt64,
+        b: *const CBlasFloat,
+        ldb: MklCBlasInt64,
+        beta: CBlasFloat,
+        c: *mut CBlasFloat,
+        ldc: MklCBlasInt64,
+    );
+    pub fn cblas_dtrsm_oop_64(
+        layout: CBlasLayout,
+        side: CBlasSide,
+        uplo: CBlasUplo,
+        transa: CBlasTranspose,
+        diag: CBlasDiag,
+        m: MklCBlasInt64,
+        n: MklCBlasInt64,
+        alpha: CBlasDouble,
+        a: *const CBlasDouble,
+        lda: MklCBlasInt64,
+        b: *const CBlasDouble,
+        ldb: MklCBlasInt64,
+        beta: CBlasDouble,
+        c: *mut CBlasDouble,
+        ldc: MklCBlasInt64,
+    );
+    pub fn cblas_ctrsm_oop_64(
+        layout: CBlasLayout,
+        side: CBlasSide,
+        uplo: CBlasUplo,
+        transa: CBlasTranspose,
+        diag: CBlasDiag,
+        m: MklCBlasInt64,
+        n: MklCBlasInt64,
+        alpha: *const CBlasVoid,
+        a: *const CBlasVoid,
+        lda: MklCBlasInt64,
+        b: *const CBlasVoid,
+        ldb: MklCBlasInt64,
+        beta: *const CBlasVoid,
+        c: *mut CBlasVoid,
+        ldc: MklCBlasInt64,
+    );
+    pub fn cblas_ztrsm_oop_64(
+        layout: CBlasLayout,
+        side: CBlasSide,
+        uplo: CBlasUplo,
+        transa: CBlasTranspose,
+        diag: CBlasDiag,
+        m: MklCBlasInt64,
+        n: MklCBlasInt64,
+        alpha: *const CBlasVoid,
+        a: *const CBlasVoid,
+        lda: MklCBlasInt64,
+        b: *const CBlasVoid,
+        ldb: MklCBlasInt64,
+        beta: *const CBlasVoid,
+        c: *mut CBlasVoid,
+        ldc: MklCBlasInt64,
     );
 
 }

@@ -8,6 +8,14 @@ fn feature_enabled(feature: &str) -> bool {
     env::var(format!("CARGO_FEATURE_{}", feature.to_uppercase())).is_ok()
 }
 
+fn mkl_interface_lib() -> &'static str {
+    if feature_enabled("ilp64") {
+        "mkl_intel_ilp64"
+    } else {
+        "mkl_intel_lp64"
+    }
+}
+
 // --- Windows Platform Logic ---
 #[cfg(target_os = "windows")]
 fn build_system() {
@@ -18,7 +26,7 @@ fn build_system() {
             let mkl_dir = Path::new(&mkl_root).join("lib");
             println!("cargo:rustc-link-search=native={}", mkl_dir.display());
             if feature_enabled("static") {
-                println!("cargo:rustc-link-lib=static=mkl_intel_ilp64");
+                println!("cargo:rustc-link-lib=static={}", mkl_interface_lib());
                 println!("cargo:rustc-link-lib=static=mkl_intel_thread");
                 println!("cargo:rustc-link-lib=static=mkl_core");
                 println!("cargo:rustc-link-lib=static=mkl_def");
@@ -62,7 +70,7 @@ fn build_system() {
             let mkl_dir = Path::new(&mkl_root).join("lib");
             println!("cargo:rustc-link-search=native={}", mkl_dir.display());
             if feature_enabled("static") {
-                println!("cargo:rustc-link-lib=static=mkl_intel_ilp64");
+                println!("cargo:rustc-link-lib=static={}", mkl_interface_lib());
                 println!("cargo:rustc-link-lib=static=mkl_intel_thread");
                 println!("cargo:rustc-link-lib=static=mkl_core");
                 println!("cargo:rustc-link-lib=dylib=iomp5");
@@ -101,7 +109,7 @@ fn build_system() {
         let mkl_dir = Path::new(&mkl_root).join("lib/intel64");
         println!("cargo:rustc-link-search=native={}", mkl_dir.display());
         if feature_enabled("static") {
-            println!("cargo:rustc-link-lib=static=mkl_intel_ilp64");
+            println!("cargo:rustc-link-lib=static={}", mkl_interface_lib());
             println!("cargo:rustc-link-lib=static=mkl_intel_thread");
             println!("cargo:rustc-link-lib=static=mkl_core");
             println!("cargo:rustc-link-lib=dylib=iomp5");
@@ -113,30 +121,46 @@ fn build_system() {
         }
         println!("cargo::warning=intel-mkl used (linux)");
     } else if feature_enabled("openblas") {
+        let blas_pkg = if feature_enabled("ilp64") {
+            "openblas64"
+        } else {
+            "openblas"
+        };
+        let flexiblas_pkg = if feature_enabled("ilp64") {
+            "flexiblas64"
+        } else {
+            "flexiblas"
+        };
         if feature_enabled("static") {
             pkg_config::Config::new()
                 .statik(true)
-                .probe("openblas")
+                .probe(blas_pkg)
                 .expect("openblas not found via pkg-config for static linking");
             println!("cargo::warning=pkg_config openblas static used");
         } else {
             // Try native openblas first
             if pkg_config::Config::new()
                 .statik(false)
-                .probe("openblas")
+                .probe(blas_pkg)
                 .is_ok()
             {
-                println!("cargo::warning=pkg_config openblas used");
+                println!("cargo::warning=pkg_config {} used", blas_pkg);
             }
             // Fallback to FlexiBLAS (common on Fedora/RHEL)
             else if pkg_config::Config::new()
                 .statik(false)
-                .probe("flexiblas")
+                .probe(flexiblas_pkg)
                 .is_ok()
             {
-                println!("cargo::warning=pkg_config flexiblas used as openblas fallback");
+                println!(
+                    "cargo::warning=pkg_config {} used as openblas fallback",
+                    flexiblas_pkg
+                );
             } else {
-                panic!("Error: Could not find OpenBLAS or FlexiBLAS via pkg-config.");
+                panic!(
+                    "Error: Could not find {} or {} via pkg-config.",
+                    blas_pkg, flexiblas_pkg
+                );
             }
         }
     } else if feature_enabled("netlib") {
@@ -151,11 +175,23 @@ fn build_system() {
         }
     } else if feature_enabled("system") {
         // Try system-provided BLAS: openblas, then flexiblas, then netlib blas
-        if pkg_config::Config::new().statik(false).probe("openblas").is_ok() {
+        if pkg_config::Config::new()
+            .statik(false)
+            .probe("openblas")
+            .is_ok()
+        {
             println!("cargo::warning=system openblas used");
-        } else if pkg_config::Config::new().statik(false).probe("flexiblas").is_ok() {
+        } else if pkg_config::Config::new()
+            .statik(false)
+            .probe("flexiblas")
+            .is_ok()
+        {
             println!("cargo::warning=system flexiblas used");
-        } else if pkg_config::Config::new().statik(false).probe("blas").is_ok() {
+        } else if pkg_config::Config::new()
+            .statik(false)
+            .probe("blas")
+            .is_ok()
+        {
             println!("cargo::warning=system netlib blas used");
         } else {
             panic!("Error: No system BLAS implementation found via pkg-config.");
@@ -171,7 +207,7 @@ fn build_system() {
         let mkl_dir = Path::new(&mkl_root).join("lib");
         println!("cargo:rustc-link-search=native={}", mkl_dir.display());
         if feature_enabled("static") {
-            println!("cargo:rustc-link-lib=static=mkl_intel_ilp64");
+            println!("cargo:rustc-link-lib=static={}", mkl_interface_lib());
             println!("cargo:rustc-link-lib=static=mkl_intel_thread");
             println!("cargo:rustc-link-lib=static=mkl_core");
             println!("cargo:rustc-link-lib=dylib=iomp5");
@@ -196,7 +232,9 @@ fn build_system() {
         {
             println!("cargo::warning=pkg_config openblas used (macos)");
         } else {
-            println!("cargo::warning=openblas feature requested but not found; falling back to Accelerate (macos)");
+            println!(
+                "cargo::warning=openblas feature requested but not found; falling back to Accelerate (macos)"
+            );
             println!("cargo:rustc-link-lib=framework=Accelerate");
         }
     } else if feature_enabled("accelerate") {

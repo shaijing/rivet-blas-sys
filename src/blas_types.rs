@@ -1,6 +1,6 @@
-#[cfg(feature = "ilp64")]
+#[cfg(all(feature = "ilp64", not(feature = "lp64")))]
 pub type BlasInt = i64;
-#[cfg(feature = "lp64")]
+#[cfg(all(feature = "lp64", not(feature = "ilp64")))]
 pub type BlasInt = i32;
 
 pub type BlasIndex = usize;

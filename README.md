@@ -9,6 +9,25 @@ This crate provides Rust FFI bindings to CBLAS (C interface to BLAS).
 - `ilp64` (default) — 64-bit integer API for large arrays
 - `lp64` — 32-bit integer API
 
+Enable exactly one of `ilp64` and `lp64`. Ordinary `cblas_*` functions use the
+selected ABI. Intel MKL's explicit 64-bit symbols are exposed separately under
+`cblas_level_one_mkl_64`, `cblas_level_two_mkl_64`, and
+`cblas_level_three_mkl_64`, and always use `MKL_INT64`/`MKL_UINT64` regardless
+of the selected ordinary ABI.
+
+Backend-specific extensions are kept out of the common modules:
+
+- `cblas_level_one_mkl` and `cblas_level_three_mkl` contain Intel MKL-only APIs.
+- `cblas_level_one_openblas` and `cblas_level_three_openblas` contain
+  OpenBLAS/FlexiBLAS extensions.
+
+When using MKL, disable the default OpenBLAS feature explicitly, for example:
+
+```bash
+cargo test --no-default-features -F intel-mkl -F ilp64
+cargo test --no-default-features -F intel-mkl -F lp64
+```
+
 ## Supported Platforms
 
 | BLAS        | Windows | Linux | macOS |

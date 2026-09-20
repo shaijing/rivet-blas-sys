@@ -1,3 +1,8 @@
+//! Explicit Intel MKL `*_64` Level 1 CBLAS entry points.
+//!
+//! Every declaration in this module binds an actual suffixed MKL symbol and
+//! uses `MKL_INT64`/`MKL_UINT64`, independent of the ordinary ABI feature.
+
 use crate::cblas::cblas_types::*;
 
 unsafe extern "C" {
@@ -16,7 +21,11 @@ unsafe extern "C" {
     /// # Returns
     ///
     /// Contains the sum of magnitudes of real and imaginary parts of all elements of the vector.
-    pub fn cblas_sasum(n: CBlasInt, x: *const CBlasFloat, incx: CBlasInt) -> CBlasFloat;
+    pub fn cblas_sasum_64(
+        n: MklCBlasInt64,
+        x: *const CBlasFloat,
+        incx: MklCBlasInt64,
+    ) -> CBlasFloat;
 
     /// The ?asum routine computes the sum of the magnitudes of elements of a real vector, or the sum of magnitudes of the real and imaginary parts of elements of a complex vector:
     ///
@@ -32,7 +41,11 @@ unsafe extern "C" {
     /// # Returns
     ///
     /// Contains the sum of magnitudes of real and imaginary parts of all elements of the vector.
-    pub fn cblas_scasum(n: CBlasInt, x: *const CBlasVoid, incx: CBlasInt) -> CBlasFloat;
+    pub fn cblas_scasum_64(
+        n: MklCBlasInt64,
+        x: *const CBlasVoid,
+        incx: MklCBlasInt64,
+    ) -> CBlasFloat;
 
     /// The ?asum routine computes the sum of the magnitudes of elements of a real vector, or the sum of magnitudes of the real and imaginary parts of elements of a complex vector:
     ///
@@ -48,7 +61,11 @@ unsafe extern "C" {
     /// # Returns
     ///
     /// Contains the sum of magnitudes of real and imaginary parts of all elements of the vector.
-    pub fn cblas_dasum(n: CBlasInt, x: *const CBlasDouble, incx: CBlasInt) -> CBlasDouble;
+    pub fn cblas_dasum_64(
+        n: MklCBlasInt64,
+        x: *const CBlasDouble,
+        incx: MklCBlasInt64,
+    ) -> CBlasDouble;
 
     /// The ?asum routine computes the sum of the magnitudes of elements of a real vector, or the sum of magnitudes of the real and imaginary parts of elements of a complex vector:
     ///
@@ -64,7 +81,11 @@ unsafe extern "C" {
     /// # Returns
     ///
     /// Contains the sum of magnitudes of real and imaginary parts of all elements of the vector.
-    pub fn cblas_dzasum(n: CBlasInt, x: *const CBlasVoid, incx: CBlasInt) -> CBlasDouble;
+    pub fn cblas_dzasum_64(
+        n: MklCBlasInt64,
+        x: *const CBlasVoid,
+        incx: MklCBlasInt64,
+    ) -> CBlasDouble;
 
     /// The ?axpy routine performs a vector-vector operation defined as
     ///
@@ -79,13 +100,13 @@ unsafe extern "C" {
     /// * `incx` - Specifies the increment for indexing vector x.
     /// * `y` - Array, size at least (1 + (n-1)*abs(incy)).
     /// * `incy` - Specifies the increment for indexing vector y.
-    pub fn cblas_saxpy(
-        n: CBlasInt,
+    pub fn cblas_saxpy_64(
+        n: MklCBlasInt64,
         a: CBlasFloat,
         x: *const CBlasFloat,
-        incx: CBlasInt,
+        incx: MklCBlasInt64,
         y: *mut CBlasFloat,
-        incy: CBlasInt,
+        incy: MklCBlasInt64,
     );
 
     /// The ?axpy routine performs a vector-vector operation defined as
@@ -101,13 +122,13 @@ unsafe extern "C" {
     /// * `incx` - Specifies the increment for indexing vector x.
     /// * `y` - Array, size at least (1 + (n-1)*abs(incy)).
     /// * `incy` - Specifies the increment for indexing vector y.
-    pub fn cblas_daxpy(
-        n: CBlasInt,
+    pub fn cblas_daxpy_64(
+        n: MklCBlasInt64,
         a: CBlasDouble,
         x: *const CBlasDouble,
-        incx: CBlasInt,
+        incx: MklCBlasInt64,
         y: *mut CBlasDouble,
-        incy: CBlasInt,
+        incy: MklCBlasInt64,
     );
 
     /// The ?axpy routine performs a vector-vector operation defined as
@@ -123,13 +144,13 @@ unsafe extern "C" {
     /// * `incx` - Specifies the increment for indexing vector x.
     /// * `y` - Array, size at least (1 + (n-1)*abs(incy)).
     /// * `incy` - Specifies the increment for indexing vector y.
-    pub fn cblas_caxpy(
-        n: CBlasInt,
+    pub fn cblas_caxpy_64(
+        n: MklCBlasInt64,
         a: *const CBlasVoid,
         x: *const CBlasVoid,
-        incx: CBlasInt,
+        incx: MklCBlasInt64,
         y: *mut CBlasVoid,
-        incy: CBlasInt,
+        incy: MklCBlasInt64,
     );
 
     /// The ?axpy routine performs a vector-vector operation defined as
@@ -145,13 +166,13 @@ unsafe extern "C" {
     /// * `incx` - Specifies the increment for indexing vector x.
     /// * `y` - Array, size at least (1 + (n-1)*abs(incy)).
     /// * `incy` - Specifies the increment for indexing vector y.
-    pub fn cblas_zaxpy(
-        n: CBlasInt,
+    pub fn cblas_zaxpy_64(
+        n: MklCBlasInt64,
         a: *const CBlasVoid,
         x: *const CBlasVoid,
-        incx: CBlasInt,
+        incx: MklCBlasInt64,
         y: *mut CBlasVoid,
-        incy: CBlasInt,
+        incy: MklCBlasInt64,
     );
 
     /// The ?copy routine performs a vector-vector operation defined as
@@ -166,12 +187,12 @@ unsafe extern "C" {
     /// * `incx` - Specifies the increment for indexing vector x.
     /// * `y` - Array, size at least (1 + (n-1)*abs(incy)).
     /// * `incy` - Specifies the increment for indexing vector y.
-    pub fn cblas_scopy(
-        n: CBlasInt,
+    pub fn cblas_scopy_64(
+        n: MklCBlasInt64,
         x: *const CBlasFloat,
-        incx: CBlasInt,
+        incx: MklCBlasInt64,
         y: *mut CBlasFloat,
-        incy: CBlasInt,
+        incy: MklCBlasInt64,
     );
 
     /// The ?copy routine performs a vector-vector operation defined as
@@ -186,12 +207,12 @@ unsafe extern "C" {
     /// * `incx` - Specifies the increment for indexing vector x.
     /// * `y` - Array, size at least (1 + (n-1)*abs(incy)).
     /// * `incy` - Specifies the increment for indexing vector y.
-    pub fn cblas_dcopy(
-        n: CBlasInt,
+    pub fn cblas_dcopy_64(
+        n: MklCBlasInt64,
         x: *const CBlasDouble,
-        incx: CBlasInt,
+        incx: MklCBlasInt64,
         y: *mut CBlasDouble,
-        incy: CBlasInt,
+        incy: MklCBlasInt64,
     );
 
     /// The ?copy routine performs a vector-vector operation defined as
@@ -206,12 +227,12 @@ unsafe extern "C" {
     /// * `incx` - Specifies the increment for indexing vector x.
     /// * `y` - Array, size at least (1 + (n-1)*abs(incy)).
     /// * `incy` - Specifies the increment for indexing vector y.
-    pub fn cblas_ccopy(
-        n: CBlasInt,
+    pub fn cblas_ccopy_64(
+        n: MklCBlasInt64,
         x: *const CBlasVoid,
-        incx: CBlasInt,
+        incx: MklCBlasInt64,
         y: *mut CBlasVoid,
-        incy: CBlasInt,
+        incy: MklCBlasInt64,
     );
 
     /// The ?copy routine performs a vector-vector operation defined as
@@ -226,12 +247,12 @@ unsafe extern "C" {
     /// * `incx` - Specifies the increment for indexing vector x.
     /// * `y` - Array, size at least (1 + (n-1)*abs(incy)).
     /// * `incy` - Specifies the increment for indexing vector y.
-    pub fn cblas_zcopy(
-        n: CBlasInt,
+    pub fn cblas_zcopy_64(
+        n: MklCBlasInt64,
         x: *const CBlasVoid,
-        incx: CBlasInt,
+        incx: MklCBlasInt64,
         y: *mut CBlasVoid,
-        incy: CBlasInt,
+        incy: MklCBlasInt64,
     );
 
     /// The ?dot routine performs a vector-vector reduction operation defined as
@@ -249,12 +270,12 @@ unsafe extern "C" {
     ///
     /// # Returns
     /// Returns the dot product of vectors x and y.
-    pub fn cblas_sdot(
-        n: CBlasInt,
+    pub fn cblas_sdot_64(
+        n: MklCBlasInt64,
         x: *const CBlasFloat,
-        incx: CBlasInt,
+        incx: MklCBlasInt64,
         y: *const CBlasFloat,
-        incy: CBlasInt,
+        incy: MklCBlasInt64,
     ) -> CBlasFloat;
 
     /// The ?dot routine performs a vector-vector reduction operation defined as
@@ -272,12 +293,12 @@ unsafe extern "C" {
     ///
     /// # Returns
     /// Returns the dot product of vectors x and y.
-    pub fn cblas_ddot(
-        n: CBlasInt,
+    pub fn cblas_ddot_64(
+        n: MklCBlasInt64,
         x: *const CBlasDouble,
-        incx: CBlasInt,
+        incx: MklCBlasInt64,
         y: *const CBlasDouble,
-        incy: CBlasInt,
+        incy: MklCBlasInt64,
     ) -> CBlasDouble;
 
     /// The sdsdot routine performs a vector-vector operation defined as
@@ -297,13 +318,13 @@ unsafe extern "C" {
     ///
     /// # Returns
     /// Returns the result of sb plus the dot product of sx and sy.
-    pub fn cblas_sdsdot(
-        n: CBlasInt,
+    pub fn cblas_sdsdot_64(
+        n: MklCBlasInt64,
         sb: CBlasFloat,
         sx: *const CBlasFloat,
-        incx: CBlasInt,
+        incx: MklCBlasInt64,
         sy: *const CBlasFloat,
-        incy: CBlasInt,
+        incy: MklCBlasInt64,
     ) -> CBlasFloat;
 
     /// The dsdot routine performs a vector-vector operation defined as
@@ -322,12 +343,12 @@ unsafe extern "C" {
     ///
     /// # Returns
     /// Returns the dot product of vectors sx and sy in double precision.
-    pub fn cblas_dsdot(
-        n: CBlasInt,
+    pub fn cblas_dsdot_64(
+        n: MklCBlasInt64,
         sx: *const CBlasFloat,
-        incx: CBlasInt,
+        incx: MklCBlasInt64,
         sy: *const CBlasFloat,
-        incy: CBlasInt,
+        incy: MklCBlasInt64,
     ) -> CBlasDouble;
 
     /// The ?dotc routine performs a vector-vector operation defined as
@@ -343,12 +364,12 @@ unsafe extern "C" {
     /// * `y` - Array, size at least (1 + (n-1)*abs(incy)).
     /// * `incy` - Specifies the increment for indexing vector y.
     /// * `dotc` - Contains the result of the conjugate dot product.
-    pub fn cblas_cdotc_sub(
-        n: CBlasInt,
+    pub fn cblas_cdotc_sub_64(
+        n: MklCBlasInt64,
         x: *const CBlasVoid,
-        incx: CBlasInt,
+        incx: MklCBlasInt64,
         y: *const CBlasVoid,
-        incy: CBlasInt,
+        incy: MklCBlasInt64,
         dotc: *mut CBlasVoid,
     );
 
@@ -365,12 +386,12 @@ unsafe extern "C" {
     /// * `y` - Array, size at least (1 + (n-1)*abs(incy)).
     /// * `incy` - Specifies the increment for indexing vector y.
     /// * `dotc` - Contains the result of the conjugate dot product.
-    pub fn cblas_zdotc_sub(
-        n: CBlasInt,
+    pub fn cblas_zdotc_sub_64(
+        n: MklCBlasInt64,
         x: *const CBlasVoid,
-        incx: CBlasInt,
+        incx: MklCBlasInt64,
         y: *const CBlasVoid,
-        incy: CBlasInt,
+        incy: MklCBlasInt64,
         dotc: *mut CBlasVoid,
     );
 
@@ -387,12 +408,12 @@ unsafe extern "C" {
     /// * `y` - Array, size at least (1 + (n-1)*abs(incy)).
     /// * `incy` - Specifies the increment for indexing vector y.
     /// * `dotu` - Contains the result of the dot product.
-    pub fn cblas_cdotu_sub(
-        n: CBlasInt,
+    pub fn cblas_cdotu_sub_64(
+        n: MklCBlasInt64,
         x: *const CBlasVoid,
-        incx: CBlasInt,
+        incx: MklCBlasInt64,
         y: *const CBlasVoid,
-        incy: CBlasInt,
+        incy: MklCBlasInt64,
         dotu: *mut CBlasVoid,
     );
 
@@ -409,12 +430,12 @@ unsafe extern "C" {
     /// * `y` - Array, size at least (1 + (n-1)*abs(incy)).
     /// * `incy` - Specifies the increment for indexing vector y.
     /// * `dotu` - Contains the result of the dot product.
-    pub fn cblas_zdotu_sub(
-        n: CBlasInt,
+    pub fn cblas_zdotu_sub_64(
+        n: MklCBlasInt64,
         x: *const CBlasVoid,
-        incx: CBlasInt,
+        incx: MklCBlasInt64,
         y: *const CBlasVoid,
-        incy: CBlasInt,
+        incy: MklCBlasInt64,
         dotu: *mut CBlasVoid,
     );
 
@@ -431,7 +452,11 @@ unsafe extern "C" {
     ///
     /// # Returns
     /// Returns the Euclidean norm of vector x.
-    pub fn cblas_snrm2(n: CBlasInt, x: *const CBlasFloat, incx: CBlasInt) -> CBlasFloat;
+    pub fn cblas_snrm2_64(
+        n: MklCBlasInt64,
+        x: *const CBlasFloat,
+        incx: MklCBlasInt64,
+    ) -> CBlasFloat;
 
     /// The ?nrm2 routine performs a vector reduction operation defined as
     ///
@@ -446,7 +471,11 @@ unsafe extern "C" {
     ///
     /// # Returns
     /// Returns the Euclidean norm of vector x.
-    pub fn cblas_dnrm2(n: CBlasInt, x: *const CBlasDouble, incx: CBlasInt) -> CBlasDouble;
+    pub fn cblas_dnrm2_64(
+        n: MklCBlasInt64,
+        x: *const CBlasDouble,
+        incx: MklCBlasInt64,
+    ) -> CBlasDouble;
 
     /// The ?nrm2 routine performs a vector reduction operation defined as
     ///
@@ -461,7 +490,11 @@ unsafe extern "C" {
     ///
     /// # Returns
     /// Returns the Euclidean norm of complex vector x.
-    pub fn cblas_scnrm2(n: CBlasInt, x: *const CBlasVoid, incx: CBlasInt) -> CBlasFloat;
+    pub fn cblas_scnrm2_64(
+        n: MklCBlasInt64,
+        x: *const CBlasVoid,
+        incx: MklCBlasInt64,
+    ) -> CBlasFloat;
 
     /// The ?nrm2 routine performs a vector reduction operation defined as
     ///
@@ -476,7 +509,11 @@ unsafe extern "C" {
     ///
     /// # Returns
     /// Returns the Euclidean norm of complex vector x.
-    pub fn cblas_dznrm2(n: CBlasInt, x: *const CBlasVoid, incx: CBlasInt) -> CBlasDouble;
+    pub fn cblas_dznrm2_64(
+        n: MklCBlasInt64,
+        x: *const CBlasVoid,
+        incx: MklCBlasInt64,
+    ) -> CBlasDouble;
 
     /// The ?rot routine performs a vector-vector operation defined as
     ///
@@ -492,12 +529,12 @@ unsafe extern "C" {
     /// * `incy` - Specifies the increment for indexing vector y.
     /// * `c` - Specifies the scalar c (cosine of rotation).
     /// * `s` - Specifies the scalar s (sine of rotation).
-    pub fn cblas_srot(
-        n: CBlasInt,
+    pub fn cblas_srot_64(
+        n: MklCBlasInt64,
         x: *mut CBlasFloat,
-        incx: CBlasInt,
+        incx: MklCBlasInt64,
         y: *mut CBlasFloat,
-        incy: CBlasInt,
+        incy: MklCBlasInt64,
         c: CBlasFloat,
         s: CBlasFloat,
     );
@@ -516,12 +553,12 @@ unsafe extern "C" {
     /// * `incy` - Specifies the increment for indexing vector y.
     /// * `c` - Specifies the scalar c (cosine of rotation).
     /// * `s` - Specifies the scalar s (sine of rotation).
-    pub fn cblas_drot(
-        n: CBlasInt,
+    pub fn cblas_drot_64(
+        n: MklCBlasInt64,
         x: *mut CBlasDouble,
-        incx: CBlasInt,
+        incx: MklCBlasInt64,
         y: *mut CBlasDouble,
-        incy: CBlasInt,
+        incy: MklCBlasInt64,
         c: CBlasDouble,
         s: CBlasDouble,
     );
@@ -540,12 +577,12 @@ unsafe extern "C" {
     /// * `incy` - Specifies the increment for indexing vector y.
     /// * `c` - Specifies the real scalar c (cosine of rotation).
     /// * `s` - Specifies the real scalar s (sine of rotation).
-    pub fn cblas_csrot(
-        n: CBlasInt,
+    pub fn cblas_csrot_64(
+        n: MklCBlasInt64,
         x: *mut CBlasVoid,
-        incx: CBlasInt,
+        incx: MklCBlasInt64,
         y: *mut CBlasVoid,
-        incy: CBlasInt,
+        incy: MklCBlasInt64,
         c: CBlasFloat,
         s: CBlasFloat,
     );
@@ -564,90 +601,14 @@ unsafe extern "C" {
     /// * `incy` - Specifies the increment for indexing vector y.
     /// * `c` - Specifies the real scalar c (cosine of rotation).
     /// * `s` - Specifies the real scalar s (sine of rotation).
-    pub fn cblas_zdrot(
-        n: CBlasInt,
+    pub fn cblas_zdrot_64(
+        n: MklCBlasInt64,
         x: *mut CBlasVoid,
-        incx: CBlasInt,
+        incx: MklCBlasInt64,
         y: *mut CBlasVoid,
-        incy: CBlasInt,
+        incy: MklCBlasInt64,
         c: CBlasDouble,
         s: CBlasDouble,
-    );
-
-    /// The ?rotg routine performs a Givens rotation of a vector with two elements.
-    /// Given the Cartesian coordinates $(a, b)$ of a point, these routines compute the parameters $c$ and $s$ for a Givens rotation matrix $G$:
-    ///
-    /// $$G = \begin{pmatrix} c & s \\ -s & c \end{pmatrix}$$
-    ///
-    /// such that
-    ///
-    /// $$G \begin{pmatrix} a \\ b \end{pmatrix} = \begin{pmatrix} r \\ 0 \end{pmatrix}$$
-    ///
-    /// where $r = \sqrt{|a|^2 + |b|^2}$.
-    ///
-    /// # Arguments
-    /// * `a` - On entry, specifies the first element of the vector. On exit, overwritten by the rotated first element (r).
-    /// * `b` - On entry, specifies the second element of the vector. On exit, overwritten by the rotation parameter z (used to recover s).
-    /// * `c` - On exit, contains the cosine of the rotation.
-    /// * `s` - On exit, contains the sine of the rotation.
-    pub fn cblas_srotg(
-        a: *mut CBlasFloat,
-        b: *mut CBlasFloat,
-        c: *mut CBlasFloat,
-        s: *mut CBlasFloat,
-    );
-
-    /// The ?rotg routine performs a Givens rotation of a vector with two elements.
-    /// Given the Cartesian coordinates $(a, b)$ of a point, these routines compute the parameters $c$ and $s$ for a Givens rotation matrix $G$:
-    ///
-    /// $$G = \begin{pmatrix} c & s \\ -s & c \end{pmatrix}$$
-    ///
-    /// such that
-    ///
-    /// $$G \begin{pmatrix} a \\ b \end{pmatrix} = \begin{pmatrix} r \\ 0 \end{pmatrix}$$
-    ///
-    /// where $r = \sqrt{|a|^2 + |b|^2}$.
-    ///
-    /// # Arguments
-    /// * `a` - On entry, specifies the first element of the vector. On exit, overwritten by the rotated first element (r).
-    /// * `b` - On entry, specifies the second element of the vector. On exit, overwritten by the rotation parameter z (used to recover s).
-    /// * `c` - On exit, contains the cosine of the rotation.
-    /// * `s` - On exit, contains the sine of the rotation.
-    pub fn cblas_drotg(
-        a: *mut CBlasDouble,
-        b: *mut CBlasDouble,
-        c: *mut CBlasDouble,
-        s: *mut CBlasDouble,
-    );
-
-    /// The ?rotg routine performs a Givens rotation for complex vectors.
-    /// Given the Cartesian coordinates $(a, b)$ of a point, these routines compute the parameters $c$ and $s$ for a Givens rotation.
-    ///
-    /// # Arguments
-    /// * `a` - On entry, specifies the first complex element of the vector. On exit, overwritten by the rotated first element.
-    /// * `b` - On entry, specifies the second complex element of the vector. On exit, overwritten by the rotation parameter.
-    /// * `c` - On exit, contains the real cosine of the rotation.
-    /// * `s` - On exit, contains the complex sine of the rotation.
-    pub fn cblas_crotg(
-        a: *mut CBlasVoid,
-        b: *const CBlasVoid,
-        c: *mut CBlasFloat,
-        s: *mut CBlasVoid,
-    );
-
-    /// The ?rotg routine performs a Givens rotation for complex vectors.
-    /// Given the Cartesian coordinates $(a, b)$ of a point, these routines compute the parameters $c$ and $s$ for a Givens rotation.
-    ///
-    /// # Arguments
-    /// * `a` - On entry, specifies the first complex element of the vector. On exit, overwritten by the rotated first element.
-    /// * `b` - On entry, specifies the second complex element of the vector. On exit, overwritten by the rotation parameter.
-    /// * `c` - On exit, contains the real cosine of the rotation.
-    /// * `s` - On exit, contains the complex sine of the rotation.
-    pub fn cblas_zrotg(
-        a: *mut CBlasVoid,
-        b: *const CBlasVoid,
-        c: *mut CBlasDouble,
-        s: *mut CBlasVoid,
     );
 
     /// The ?rotm routine performs a modified Givens rotation of a pair of vectors.
@@ -665,12 +626,12 @@ unsafe extern "C" {
     /// * `y` - Array, size at least (1 + (n-1)*abs(incy)). On exit, overwritten by the rotated vector.
     /// * `incy` - Specifies the increment for indexing vector y.
     /// * `param` - Array, size 5. Contains the modified Givens rotation parameters: flag, $h_{11}$, $h_{21}$, $h_{12}$, $h_{22}$.
-    pub fn cblas_srotm(
-        n: CBlasInt,
+    pub fn cblas_srotm_64(
+        n: MklCBlasInt64,
         x: *mut CBlasFloat,
-        incx: CBlasInt,
+        incx: MklCBlasInt64,
         y: *mut CBlasFloat,
-        incy: CBlasInt,
+        incy: MklCBlasInt64,
         param: *const CBlasFloat,
     );
 
@@ -689,52 +650,27 @@ unsafe extern "C" {
     /// * `y` - Array, size at least (1 + (n-1)*abs(incy)). On exit, overwritten by the rotated vector.
     /// * `incy` - Specifies the increment for indexing vector y.
     /// * `param` - Array, size 5. Contains the modified Givens rotation parameters: flag, $h_{11}$, $h_{21}$, $h_{12}$, $h_{22}$.
-    pub fn cblas_drotm(
-        n: CBlasInt,
+    pub fn cblas_drotm_64(
+        n: MklCBlasInt64,
         x: *mut CBlasDouble,
-        incx: CBlasInt,
+        incx: MklCBlasInt64,
         y: *mut CBlasDouble,
-        incy: CBlasInt,
+        incy: MklCBlasInt64,
         param: *const CBlasDouble,
     );
 
-    /// The ?rotmg routine computes the parameters for a modified Givens rotation.
-    /// Given input matrices $D_1$, $D_2$ and vectors, this routine computes the modified Givens transformation matrix $H$ that zeroes the $y$-component of the vector:
+    /// The ?scal routine performs a vector operation defined as
     ///
-    /// $$\begin{pmatrix} x_1 \\ y_1 \end{pmatrix} := H \begin{pmatrix} \sqrt{d_1} x_1 \\ \sqrt{d_2} y_1 \end{pmatrix}$$
+    /// $$x := a \cdot x$$
     ///
-    /// # Arguments
-    /// * `d1` - On entry, specifies the first diagonal element. On exit, contains the updated value.
-    /// * `d2` - On entry, specifies the second diagonal element. On exit, contains the updated value.
-    /// * `x1` - On entry, specifies the first vector component. On exit, contains the updated value.
-    /// * `y1` - On entry, specifies the second vector component (scalar input).
-    /// * `param` - Array, size 5. On exit, contains the modified Givens rotation parameters: flag, $h_{11}$, $h_{21}$, $h_{12}$, $h_{22}$.
-    pub fn cblas_srotmg(
-        d1: *mut CBlasFloat,
-        d2: *mut CBlasFloat,
-        x1: *mut CBlasFloat,
-        y1: CBlasFloat,
-        param: *mut CBlasFloat,
-    );
-
-    /// The ?rotmg routine computes the parameters for a modified Givens rotation.
-    /// Given input matrices $D_1$, $D_2$ and vectors, this routine computes the modified Givens transformation matrix $H$ that zeroes the $y$-component of the vector:
-    ///
-    /// $$\begin{pmatrix} x_1 \\ y_1 \end{pmatrix} := H \begin{pmatrix} \sqrt{d_1} x_1 \\ \sqrt{d_2} y_1 \end{pmatrix}$$
+    /// where $a$ is a scalar and $x$ is a vector with $n$ elements.
     ///
     /// # Arguments
-    /// * `d1` - On entry, specifies the first diagonal element. On exit, contains the updated value.
-    /// * `d2` - On entry, specifies the second diagonal element. On exit, contains the updated value.
-    /// * `x1` - On entry, specifies the first vector component. On exit, contains the updated value.
-    /// * `y1` - On entry, specifies the second vector component (scalar input).
-    /// * `param` - Array, size 5. On exit, contains the modified Givens rotation parameters: flag, $h_{11}$, $h_{21}$, $h_{12}$, $h_{22}$.
-    pub fn cblas_drotmg(
-        d1: *mut CBlasDouble,
-        d2: *mut CBlasDouble,
-        x1: *mut CBlasDouble,
-        y1: CBlasDouble,
-        param: *mut CBlasDouble,
-    );
+    /// * `n` - Specifies the number of elements in vector x.
+    /// * `a` - Specifies the scalar a.
+    /// * `x` - Array, size at least (1 + (n-1)*abs(incx)). On exit, overwritten by the scaled vector.
+    /// * `incx` - Specifies the increment for indexing vector x.
+    pub fn cblas_sscal_64(n: MklCBlasInt64, a: CBlasFloat, x: *mut CBlasFloat, incx: MklCBlasInt64);
 
     /// The ?scal routine performs a vector operation defined as
     ///
@@ -747,20 +683,12 @@ unsafe extern "C" {
     /// * `a` - Specifies the scalar a.
     /// * `x` - Array, size at least (1 + (n-1)*abs(incx)). On exit, overwritten by the scaled vector.
     /// * `incx` - Specifies the increment for indexing vector x.
-    pub fn cblas_sscal(n: CBlasInt, a: CBlasFloat, x: *mut CBlasFloat, incx: CBlasInt);
-
-    /// The ?scal routine performs a vector operation defined as
-    ///
-    /// $$x := a \cdot x$$
-    ///
-    /// where $a$ is a scalar and $x$ is a vector with $n$ elements.
-    ///
-    /// # Arguments
-    /// * `n` - Specifies the number of elements in vector x.
-    /// * `a` - Specifies the scalar a.
-    /// * `x` - Array, size at least (1 + (n-1)*abs(incx)). On exit, overwritten by the scaled vector.
-    /// * `incx` - Specifies the increment for indexing vector x.
-    pub fn cblas_dscal(n: CBlasInt, a: CBlasDouble, x: *mut CBlasDouble, incx: CBlasInt);
+    pub fn cblas_dscal_64(
+        n: MklCBlasInt64,
+        a: CBlasDouble,
+        x: *mut CBlasDouble,
+        incx: MklCBlasInt64,
+    );
 
     /// The ?scal routine performs a vector operation defined as
     ///
@@ -773,7 +701,12 @@ unsafe extern "C" {
     /// * `a` - Specifies the complex scalar a.
     /// * `x` - Array, size at least (1 + (n-1)*abs(incx)). Complex vector. On exit, overwritten by the scaled vector.
     /// * `incx` - Specifies the increment for indexing vector x.
-    pub fn cblas_cscal(n: CBlasInt, a: *const CBlasVoid, x: *mut CBlasVoid, incx: CBlasInt);
+    pub fn cblas_cscal_64(
+        n: MklCBlasInt64,
+        a: *const CBlasVoid,
+        x: *mut CBlasVoid,
+        incx: MklCBlasInt64,
+    );
 
     /// The ?scal routine performs a vector operation defined as
     ///
@@ -786,7 +719,12 @@ unsafe extern "C" {
     /// * `a` - Specifies the complex scalar a.
     /// * `x` - Array, size at least (1 + (n-1)*abs(incx)). Complex double-precision vector. On exit, overwritten by the scaled vector.
     /// * `incx` - Specifies the increment for indexing vector x.
-    pub fn cblas_zscal(n: CBlasInt, a: *const CBlasVoid, x: *mut CBlasVoid, incx: CBlasInt);
+    pub fn cblas_zscal_64(
+        n: MklCBlasInt64,
+        a: *const CBlasVoid,
+        x: *mut CBlasVoid,
+        incx: MklCBlasInt64,
+    );
 
     /// The csscal routine performs a vector operation defined as
     ///
@@ -800,7 +738,7 @@ unsafe extern "C" {
     /// * `a` - Specifies the real scalar a.
     /// * `x` - Array, size at least (1 + (n-1)*abs(incx)). Complex vector. On exit, overwritten by the scaled vector.
     /// * `incx` - Specifies the increment for indexing vector x.
-    pub fn cblas_csscal(n: CBlasInt, a: CBlasFloat, x: *mut CBlasVoid, incx: CBlasInt);
+    pub fn cblas_csscal_64(n: MklCBlasInt64, a: CBlasFloat, x: *mut CBlasVoid, incx: MklCBlasInt64);
 
     /// The zdscal routine performs a vector operation defined as
     ///
@@ -814,26 +752,11 @@ unsafe extern "C" {
     /// * `a` - Specifies the real scalar a.
     /// * `x` - Array, size at least (1 + (n-1)*abs(incx)). Complex double-precision vector. On exit, overwritten by the scaled vector.
     /// * `incx` - Specifies the increment for indexing vector x.
-    pub fn cblas_zdscal(n: CBlasInt, a: CBlasDouble, x: *mut CBlasVoid, incx: CBlasInt);
-
-    /// The ?swap routine performs a vector-vector operation defined as
-    ///
-    /// $$\mathrm{swap}(x, y)$$
-    ///
-    /// where $x$ and $y$ are vectors of $n$ elements.
-    ///
-    /// # Arguments
-    /// * `n` - Specifies the number of elements in vectors x and y.
-    /// * `x` - Array, size at least (1 + (n-1)*abs(incx)). On exit, contains the elements of y.
-    /// * `incx` - Specifies the increment for indexing vector x.
-    /// * `y` - Array, size at least (1 + (n-1)*abs(incy)). On exit, contains the elements of x.
-    /// * `incy` - Specifies the increment for indexing vector y.
-    pub fn cblas_sswap(
-        n: CBlasInt,
-        x: *mut CBlasFloat,
-        incx: CBlasInt,
-        y: *mut CBlasFloat,
-        incy: CBlasInt,
+    pub fn cblas_zdscal_64(
+        n: MklCBlasInt64,
+        a: CBlasDouble,
+        x: *mut CBlasVoid,
+        incx: MklCBlasInt64,
     );
 
     /// The ?swap routine performs a vector-vector operation defined as
@@ -848,12 +771,32 @@ unsafe extern "C" {
     /// * `incx` - Specifies the increment for indexing vector x.
     /// * `y` - Array, size at least (1 + (n-1)*abs(incy)). On exit, contains the elements of x.
     /// * `incy` - Specifies the increment for indexing vector y.
-    pub fn cblas_dswap(
-        n: CBlasInt,
+    pub fn cblas_sswap_64(
+        n: MklCBlasInt64,
+        x: *mut CBlasFloat,
+        incx: MklCBlasInt64,
+        y: *mut CBlasFloat,
+        incy: MklCBlasInt64,
+    );
+
+    /// The ?swap routine performs a vector-vector operation defined as
+    ///
+    /// $$\mathrm{swap}(x, y)$$
+    ///
+    /// where $x$ and $y$ are vectors of $n$ elements.
+    ///
+    /// # Arguments
+    /// * `n` - Specifies the number of elements in vectors x and y.
+    /// * `x` - Array, size at least (1 + (n-1)*abs(incx)). On exit, contains the elements of y.
+    /// * `incx` - Specifies the increment for indexing vector x.
+    /// * `y` - Array, size at least (1 + (n-1)*abs(incy)). On exit, contains the elements of x.
+    /// * `incy` - Specifies the increment for indexing vector y.
+    pub fn cblas_dswap_64(
+        n: MklCBlasInt64,
         x: *mut CBlasDouble,
-        incx: CBlasInt,
+        incx: MklCBlasInt64,
         y: *mut CBlasDouble,
-        incy: CBlasInt,
+        incy: MklCBlasInt64,
     );
 
     /// The ?swap routine performs a vector-vector operation defined as
@@ -868,12 +811,12 @@ unsafe extern "C" {
     /// * `incx` - Specifies the increment for indexing vector x.
     /// * `y` - Array, size at least (1 + (n-1)*abs(incy)). Complex vector. On exit, contains the elements of x.
     /// * `incy` - Specifies the increment for indexing vector y.
-    pub fn cblas_cswap(
-        n: CBlasInt,
+    pub fn cblas_cswap_64(
+        n: MklCBlasInt64,
         x: *mut CBlasVoid,
-        incx: CBlasInt,
+        incx: MklCBlasInt64,
         y: *mut CBlasVoid,
-        incy: CBlasInt,
+        incy: MklCBlasInt64,
     );
 
     /// The ?swap routine performs a vector-vector operation defined as
@@ -888,12 +831,12 @@ unsafe extern "C" {
     /// * `incx` - Specifies the increment for indexing vector x.
     /// * `y` - Array, size at least (1 + (n-1)*abs(incy)). Complex double-precision vector. On exit, contains the elements of x.
     /// * `incy` - Specifies the increment for indexing vector y.
-    pub fn cblas_zswap(
-        n: CBlasInt,
+    pub fn cblas_zswap_64(
+        n: MklCBlasInt64,
         x: *mut CBlasVoid,
-        incx: CBlasInt,
+        incx: MklCBlasInt64,
         y: *mut CBlasVoid,
-        incy: CBlasInt,
+        incy: MklCBlasInt64,
     );
 
     /// The i?amax routine performs a vector reduction operation defined as
@@ -909,7 +852,11 @@ unsafe extern "C" {
     ///
     /// # Returns
     /// Returns the index (0-based) of the element with the largest absolute value. If n ≤ 0, returns 0.
-    pub fn cblas_isamax(n: CBlasInt, x: *const CBlasFloat, incx: CBlasInt) -> CBlasIndex;
+    pub fn cblas_isamax_64(
+        n: MklCBlasInt64,
+        x: *const CBlasFloat,
+        incx: MklCBlasInt64,
+    ) -> MklCBlasIndex64;
 
     /// The i?amax routine performs a vector reduction operation defined as
     ///
@@ -924,7 +871,11 @@ unsafe extern "C" {
     ///
     /// # Returns
     /// Returns the index (0-based) of the element with the largest absolute value. If n ≤ 0, returns 0.
-    pub fn cblas_idamax(n: CBlasInt, x: *const CBlasDouble, incx: CBlasInt) -> CBlasIndex;
+    pub fn cblas_idamax_64(
+        n: MklCBlasInt64,
+        x: *const CBlasDouble,
+        incx: MklCBlasInt64,
+    ) -> MklCBlasIndex64;
 
     /// The i?amax routine performs a vector reduction operation defined as
     ///
@@ -939,7 +890,11 @@ unsafe extern "C" {
     ///
     /// # Returns
     /// Returns the index (0-based) of the element with the largest absolute value. If n ≤ 0, returns 0.
-    pub fn cblas_icamax(n: CBlasInt, x: *const CBlasVoid, incx: CBlasInt) -> CBlasIndex;
+    pub fn cblas_icamax_64(
+        n: MklCBlasInt64,
+        x: *const CBlasVoid,
+        incx: MklCBlasInt64,
+    ) -> MklCBlasIndex64;
 
     /// The i?amax routine performs a vector reduction operation defined as
     ///
@@ -954,27 +909,50 @@ unsafe extern "C" {
     ///
     /// # Returns
     /// Returns the index (0-based) of the element with the largest absolute value. If n ≤ 0, returns 0.
-    pub fn cblas_izamax(n: CBlasInt, x: *const CBlasVoid, incx: CBlasInt) -> CBlasIndex;
+    pub fn cblas_izamax_64(
+        n: MklCBlasInt64,
+        x: *const CBlasVoid,
+        incx: MklCBlasInt64,
+    ) -> MklCBlasIndex64;
+    pub fn cblas_crot_64(
+        n: MklCBlasInt64,
+        x: *mut CBlasVoid,
+        incx: MklCBlasInt64,
+        y: *mut CBlasVoid,
+        incy: MklCBlasInt64,
+        c: CBlasFloat,
+        s: *const CBlasVoid,
+    );
 
-    /// The scabs1 routine computes the absolute value of a complex number defined as
-    ///
-    /// $$|z| = |\mathrm{Re}(z)| + |\mathrm{Im}(z)|$$
-    ///
-    /// # Arguments
-    /// * `z` - Pointer to a complex single-precision number.
-    ///
-    /// # Returns
-    /// Returns the sum of the absolute values of the real and imaginary parts.
-    pub fn cblas_scabs1(z: *const CBlasVoid) -> CBlasFloat;
+    pub fn cblas_zrot_64(
+        n: MklCBlasInt64,
+        x: *mut CBlasVoid,
+        incx: MklCBlasInt64,
+        y: *mut CBlasVoid,
+        incy: MklCBlasInt64,
+        c: CBlasDouble,
+        s: *const CBlasVoid,
+    );
 
-    /// The dcabs1 routine computes the absolute value of a complex number defined as
-    ///
-    /// $$|z| = |\mathrm{Re}(z)| + |\mathrm{Im}(z)|$$
-    ///
-    /// # Arguments
-    /// * `z` - Pointer to a complex double-precision number.
-    ///
-    /// # Returns
-    /// Returns the sum of the absolute values of the real and imaginary parts.
-    pub fn cblas_dcabs1(z: *const CBlasVoid) -> CBlasDouble;
+    pub fn cblas_isamin_64(
+        n: MklCBlasInt64,
+        x: *const CBlasFloat,
+        incx: MklCBlasInt64,
+    ) -> MklCBlasIndex64;
+    pub fn cblas_idamin_64(
+        n: MklCBlasInt64,
+        x: *const CBlasDouble,
+        incx: MklCBlasInt64,
+    ) -> MklCBlasIndex64;
+    pub fn cblas_icamin_64(
+        n: MklCBlasInt64,
+        x: *const CBlasVoid,
+        incx: MklCBlasInt64,
+    ) -> MklCBlasIndex64;
+    pub fn cblas_izamin_64(
+        n: MklCBlasInt64,
+        x: *const CBlasVoid,
+        incx: MklCBlasInt64,
+    ) -> MklCBlasIndex64;
+
 }

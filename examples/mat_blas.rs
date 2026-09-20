@@ -48,17 +48,17 @@ pub fn dgemm(
             layout,
             transa,
             transb,
-            m,
-            n,
-            k,
+            m as CBlasInt,
+            n as CBlasInt,
+            k as CBlasInt,
             alpha,
             a.as_ptr(),
-            lda,
+            lda as CBlasInt,
             b.as_ptr(),
-            ldb,
+            ldb as CBlasInt,
             beta,
             c.as_mut_ptr(),
-            ldc,
+            ldc as CBlasInt,
         );
     }
 }
