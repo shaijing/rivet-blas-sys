@@ -5,7 +5,8 @@ use std::path::Path;
 use std::env;
 
 fn feature_enabled(feature: &str) -> bool {
-    env::var(format!("CARGO_FEATURE_{}", feature.to_uppercase())).is_ok()
+    let env_feature = feature.to_uppercase().replace('-', "_");
+    env::var(format!("CARGO_FEATURE_{env_feature}")).is_ok()
 }
 
 fn mkl_interface_lib() -> &'static str {
@@ -50,8 +51,21 @@ fn build_system() {
                     .is_ok()
                 {
                     println!("cargo::warning=pkg_config openblas used");
+                } else {
+                    panic!("OpenBLAS not found via vcpkg or pkg-config");
                 }
             }
+        } else if feature_enabled("flexiblas") {
+            let flexiblas_pkg = if feature_enabled("ilp64") {
+                "flexiblas64"
+            } else {
+                "flexiblas"
+            };
+            pkg_config::Config::new()
+                .statik(feature_enabled("static"))
+                .probe(flexiblas_pkg)
+                .expect("FlexiBLAS not found via pkg-config");
+            println!("cargo::warning=pkg_config {} used", flexiblas_pkg);
         } else if feature_enabled("netlib") {
             if pkg_config::Config::new()
                 .statik(feature_enabled("static"))
@@ -59,6 +73,8 @@ fn build_system() {
                 .is_ok()
             {
                 println!("cargo::warning=pkg_config netlib blas used");
+            } else {
+                panic!("Netlib BLAS not found via pkg-config");
             }
         }
     }
@@ -88,7 +104,23 @@ fn build_system() {
                 .is_ok()
             {
                 println!("cargo::warning=pkg_config openblas used (windows gnu)");
+            } else {
+                panic!("OpenBLAS not found via pkg-config (windows gnu)");
             }
+        } else if feature_enabled("flexiblas") {
+            let flexiblas_pkg = if feature_enabled("ilp64") {
+                "flexiblas64"
+            } else {
+                "flexiblas"
+            };
+            pkg_config::Config::new()
+                .statik(feature_enabled("static"))
+                .probe(flexiblas_pkg)
+                .expect("FlexiBLAS not found via pkg-config");
+            println!(
+                "cargo::warning=pkg_config {} used (windows gnu)",
+                flexiblas_pkg
+            );
         } else if feature_enabled("netlib") {
             if pkg_config::Config::new()
                 .statik(feature_enabled("static"))
@@ -96,6 +128,8 @@ fn build_system() {
                 .is_ok()
             {
                 println!("cargo::warning=pkg_config netlib blas used (windows gnu)");
+            } else {
+                panic!("Netlib BLAS not found via pkg-config (windows gnu)");
             }
         }
     }
@@ -120,6 +154,17 @@ fn build_system() {
             println!("cargo:rustc-link-lib=mkl_rt");
         }
         println!("cargo::warning=intel-mkl used (linux)");
+    } else if feature_enabled("flexiblas") {
+        let flexiblas_pkg = if feature_enabled("ilp64") {
+            "flexiblas64"
+        } else {
+            "flexiblas"
+        };
+        pkg_config::Config::new()
+            .statik(feature_enabled("static"))
+            .probe(flexiblas_pkg)
+            .expect("FlexiBLAS not found via pkg-config");
+        println!("cargo::warning=pkg_config {} used", flexiblas_pkg);
     } else if feature_enabled("openblas") {
         let blas_pkg = if feature_enabled("ilp64") {
             "openblas64"
@@ -173,28 +218,40 @@ fn build_system() {
         } else {
             panic!("Error: Could not find netlib BLAS via pkg-config.");
         }
-    } else if feature_enabled("system") {
-        // Try system-provided BLAS: openblas, then flexiblas, then netlib blas
+    } else if feature_enabled("system-blas") {
+        let openblas_pkg = if feature_enabled("ilp64") {
+            "openblas64"
+        } else {
+            "openblas"
+        };
+        let flexiblas_pkg = if feature_enabled("ilp64") {
+            "flexiblas64"
+        } else {
+            "flexiblas"
+        };
+
+        // Try system-provided BLAS in ABI-compatible order.
         if pkg_config::Config::new()
-            .statik(false)
-            .probe("openblas")
+            .statik(feature_enabled("static"))
+            .probe(openblas_pkg)
             .is_ok()
         {
-            println!("cargo::warning=system openblas used");
+            println!("cargo::warning=system {} used", openblas_pkg);
         } else if pkg_config::Config::new()
-            .statik(false)
-            .probe("flexiblas")
+            .statik(feature_enabled("static"))
+            .probe(flexiblas_pkg)
             .is_ok()
         {
-            println!("cargo::warning=system flexiblas used");
-        } else if pkg_config::Config::new()
-            .statik(false)
-            .probe("blas")
-            .is_ok()
+            println!("cargo::warning=system {} used", flexiblas_pkg);
+        } else if !feature_enabled("ilp64")
+            && pkg_config::Config::new()
+                .statik(feature_enabled("static"))
+                .probe("blas")
+                .is_ok()
         {
             println!("cargo::warning=system netlib blas used");
         } else {
-            panic!("Error: No system BLAS implementation found via pkg-config.");
+            panic!("Error: No ABI-compatible system BLAS implementation found via pkg-config.");
         }
     }
 }
@@ -232,11 +289,19 @@ fn build_system() {
         {
             println!("cargo::warning=pkg_config openblas used (macos)");
         } else {
-            println!(
-                "cargo::warning=openblas feature requested but not found; falling back to Accelerate (macos)"
-            );
-            println!("cargo:rustc-link-lib=framework=Accelerate");
+            panic!("Error: Could not find OpenBLAS via pkg-config on macOS.");
         }
+    } else if feature_enabled("flexiblas") {
+        let flexiblas_pkg = if feature_enabled("ilp64") {
+            "flexiblas64"
+        } else {
+            "flexiblas"
+        };
+        pkg_config::Config::new()
+            .statik(feature_enabled("static"))
+            .probe(flexiblas_pkg)
+            .expect("FlexiBLAS not found via pkg-config on macOS");
+        println!("cargo::warning=pkg_config {} used (macos)", flexiblas_pkg);
     } else if feature_enabled("accelerate") {
         println!("cargo:rustc-link-lib=framework=Accelerate");
         println!("cargo::warning=accelerate framework used (macos)");
@@ -250,9 +315,28 @@ fn build_system() {
         } else {
             panic!("Error: Could not find netlib BLAS via pkg-config on macOS.");
         }
-    } else if feature_enabled("system") {
-        println!("cargo:rustc-link-lib=framework=Accelerate");
-        println!("cargo::warning=system accelerate framework used (macos)");
+    } else if feature_enabled("system-blas") {
+        if feature_enabled("ilp64") {
+            let flexiblas_pkg = "flexiblas64";
+            if pkg_config::Config::new()
+                .statik(feature_enabled("static"))
+                .probe("openblas64")
+                .is_ok()
+            {
+                println!("cargo::warning=system openblas64 used (macos)");
+            } else if pkg_config::Config::new()
+                .statik(feature_enabled("static"))
+                .probe(flexiblas_pkg)
+                .is_ok()
+            {
+                println!("cargo::warning=system {} used (macos)", flexiblas_pkg);
+            } else {
+                panic!("Error: No ILP64 system BLAS implementation found on macOS.");
+            }
+        } else {
+            println!("cargo:rustc-link-lib=framework=Accelerate");
+            println!("cargo::warning=system accelerate framework used (macos)");
+        }
     } else {
         // Default: link against macOS Accelerate framework (includes BLAS)
         println!("cargo:rustc-link-lib=framework=Accelerate");
@@ -263,16 +347,20 @@ fn build_system() {
 // --- Unsupported Platforms ---
 #[cfg(not(any(target_os = "windows", target_os = "linux", target_os = "macos")))]
 fn build_system() {
-    if feature_enabled("system") {
-        // Try pkg-config as a last resort on unknown platforms
+    if feature_enabled("system-blas") {
+        let blas_pkg = if feature_enabled("ilp64") {
+            "flexiblas64"
+        } else {
+            "blas"
+        };
         if pkg_config::Config::new()
-            .statik(false)
-            .probe("blas")
+            .statik(feature_enabled("static"))
+            .probe(blas_pkg)
             .is_ok()
         {
-            println!("cargo::warning=system blas used (unknown platform)");
+            println!("cargo::warning=system {} used (unknown platform)", blas_pkg);
         } else {
-            panic!("Error: No BLAS implementation found on this platform.");
+            panic!("Error: No ABI-compatible system BLAS implementation found.");
         }
     } else {
         println!("cargo:warning=unsupported platform for BLAS linking");

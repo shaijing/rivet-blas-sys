@@ -4,16 +4,20 @@
 #[cfg(any(
     feature = "intel-mkl",
     feature = "openblas",
+    feature = "flexiblas",
     feature = "netlib",
-    feature = "accelerate"
+    feature = "accelerate",
+    feature = "system-blas"
 ))]
 use rivet_blas_sys::cblas::prelude::*;
 
 #[cfg(any(
     feature = "intel-mkl",
     feature = "openblas",
+    feature = "flexiblas",
     feature = "netlib",
-    feature = "accelerate"
+    feature = "accelerate",
+    feature = "system-blas"
 ))]
 mod level_two {
     use super::*;

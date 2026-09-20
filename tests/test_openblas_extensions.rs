@@ -1,4 +1,7 @@
-#![cfg(all(feature = "openblas", not(feature = "intel-mkl")))]
+#![cfg(all(
+    any(feature = "openblas", feature = "flexiblas"),
+    not(feature = "intel-mkl")
+))]
 
 use rivet_blas_sys::cblas::cblas_level_one_openblas::cblas_saxpby;
 use rivet_blas_sys::cblas::cblas_level_three_openblas::{cblas_sgeadd, cblas_somatcopy};

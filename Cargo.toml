@@ -13,14 +13,24 @@ repository = "https://github.com/shaijing/rivet-blas-sys"
 
 [features]
 default = ["openblas", "ilp64"]
+
+# Integer ABI. Exactly one of these features must be enabled.
 ilp64 = []
 lp64 = []
+
+# BLAS backend. Exactly one backend must be enabled.
 openblas = []
+flexiblas = []
 intel-mkl = []
 netlib = []
 accelerate = []
+
+# Link the selected backend statically where supported.
 static = []
-system = []
+
+# Backwards-compatible alias for `system-blas`.
+system-blas = []
+system = ["system-blas"]
 
 [dependencies]
 

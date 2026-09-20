@@ -1,9 +1,3 @@
-#[cfg(all(feature = "ilp64", feature = "lp64"))]
-compile_error!("features `ilp64` and `lp64` are mutually exclusive");
-
-#[cfg(not(any(feature = "ilp64", feature = "lp64")))]
-compile_error!("enable exactly one integer ABI feature: `ilp64` or `lp64`");
-
 /// Integer type used by the selected backend's ordinary CBLAS entry points.
 ///
 /// `ilp64` maps to `long long` and `lp64` maps to `int`. For Intel MKL this

@@ -14,9 +14,15 @@ pub mod cblas_level_three_mkl_64;
 #[cfg(feature = "intel-mkl")]
 pub mod cblas_level_two_mkl_64;
 
-#[cfg(all(feature = "openblas", not(feature = "intel-mkl")))]
+#[cfg(all(
+    any(feature = "openblas", feature = "flexiblas"),
+    not(feature = "intel-mkl")
+))]
 pub mod cblas_level_one_openblas;
-#[cfg(all(feature = "openblas", not(feature = "intel-mkl")))]
+#[cfg(all(
+    any(feature = "openblas", feature = "flexiblas"),
+    not(feature = "intel-mkl")
+))]
 pub mod cblas_level_three_openblas;
 
 pub mod prelude {
@@ -36,8 +42,14 @@ pub mod prelude {
     #[cfg(feature = "intel-mkl")]
     pub use crate::cblas::cblas_level_two_mkl_64::*;
 
-    #[cfg(all(feature = "openblas", not(feature = "intel-mkl")))]
+    #[cfg(all(
+        any(feature = "openblas", feature = "flexiblas"),
+        not(feature = "intel-mkl")
+    ))]
     pub use crate::cblas::cblas_level_one_openblas::*;
-    #[cfg(all(feature = "openblas", not(feature = "intel-mkl")))]
+    #[cfg(all(
+        any(feature = "openblas", feature = "flexiblas"),
+        not(feature = "intel-mkl")
+    ))]
     pub use crate::cblas::cblas_level_three_openblas::*;
 }

@@ -4,10 +4,11 @@ This crate provides Rust FFI bindings to CBLAS (C interface to BLAS).
 
 ## Features
 
-- `intel-mkl` — Link against Intel MKL
-- `openblas` — Link against OpenBLAS
-- `ilp64` (default) — 64-bit integer API for large arrays
-- `lp64` — 32-bit integer API
+- ABI features: `ilp64` (default) or `lp64` — exactly one is required.
+- Backend features: `openblas` (default), `flexiblas`, `intel-mkl`, `netlib`,
+  `accelerate`, or `system-blas` — exactly one is required.
+- `system` is a backwards-compatible alias for `system-blas`.
+- `static` requests static linking where the platform and backend support it.
 
 Enable exactly one of `ilp64` and `lp64`. Ordinary `cblas_*` functions use the
 selected ABI. Intel MKL's explicit 64-bit symbols are exposed separately under
@@ -21,11 +22,19 @@ Backend-specific extensions are kept out of the common modules:
 - `cblas_level_one_openblas` and `cblas_level_three_openblas` contain
   OpenBLAS/FlexiBLAS extensions.
 
-When using MKL, disable the default OpenBLAS feature explicitly, for example:
+The default feature set is `openblas` + `ilp64`. On Linux, the `openblas`
+backend may use an ABI-compatible FlexiBLAS package as a compatibility fallback
+when the OpenBLAS pkg-config package is unavailable; use `flexiblas` when that
+backend choice should be explicit. Do not use `--all-features`, because backend
+and ABI features are intentionally mutually exclusive.
+
+When selecting another backend, disable the defaults explicitly, for example:
 
 ```bash
 cargo test --no-default-features -F intel-mkl -F ilp64
 cargo test --no-default-features -F intel-mkl -F lp64
+cargo test --no-default-features -F flexiblas -F ilp64
+cargo test --no-default-features -F openblas -F lp64
 ```
 
 ## Supported Platforms
@@ -34,25 +43,31 @@ cargo test --no-default-features -F intel-mkl -F lp64
 | :-----------| :------: | :----: | :----: |
 | `intel-mkl` |   ✅    |  ✅   |       |
 | `openblas`  |   ✅    |  ✅   |  ✅   |
-| `accelerate`|         |       |  ✅ (default) |
+| `flexiblas` |         |  ✅   |  ✅   |
+| `netlib`    |   ✅    |  ✅   |  ✅   |
+| `accelerate`|         |       |  ✅   |
+| `system-blas` | ✅    |  ✅   |  ✅   |
 
 ## Usage
 
 ```bash
-# macOS (default: Accelerate framework)
+# Default: OpenBLAS with ILP64
 cargo build
 
 # macOS with OpenBLAS (requires pkg-config)
 cargo build -F openblas
 
+# Linux with explicit FlexiBLAS (requires pkg-config)
+cargo build --no-default-features -F flexiblas -F ilp64
+
 # Linux with Intel MKL
-cargo build -F intel-mkl
+cargo build --no-default-features -F intel-mkl -F ilp64
 
 # Linux with OpenBLAS
 cargo build -F openblas
 
 # Windows with Intel MKL (requires MKLROOT)
-cargo build -F intel-mkl
+cargo build --no-default-features -F intel-mkl -F ilp64
 
 # Windows with OpenBLAS (requires vcpkg)
 cargo build -F openblas
