@@ -1,4 +1,4 @@
-# blas-rs
+# blas-sys
 
 This crate provides Rust FFI bindings to CBLAS (C interface to BLAS).
 

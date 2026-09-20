@@ -1,4 +1,4 @@
-//! # blas-rs
+//! # blas-sys
 //! The packages provides a BLAS binding.
 
 //! ## Configuration

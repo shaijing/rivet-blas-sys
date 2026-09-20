@@ -2,7 +2,7 @@
 //! Requires a BLAS backend: `cargo test -F intel-mkl` or `cargo test -F openblas`
 
 #[cfg(any(feature = "intel-mkl", feature = "openblas", feature = "netlib", feature = "accelerate"))]
-use blas_rs::cblas::prelude::*;
+use blas_sys::cblas::prelude::*;
 
 #[cfg(any(feature = "intel-mkl", feature = "openblas", feature = "netlib", feature = "accelerate"))]
 mod level_two {

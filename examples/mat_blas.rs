@@ -1,4 +1,4 @@
-use blas_rs::cblas::prelude::*;
+use blas_sys::cblas::prelude::*;
 
 #[inline(always)]
 pub fn sdot(x: &[f32], incx: i64, y: &[f32], incy: i64) -> f32 {
