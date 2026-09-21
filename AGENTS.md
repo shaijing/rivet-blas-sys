@@ -31,7 +31,7 @@ dimension, layout, and stride requirements.
 
 ## Feature model
 
-The default configuration is `openblas-static-lp64`.
+The default configuration is `flexiblas-dynamic-lp64`.
 
 Exactly one complete native configuration feature must be selected. The
 feature name encodes backend, link mode, ABI, and (for MKL) threading:
@@ -63,6 +63,12 @@ Backend restrictions:
   `flexiblas-*` feature when that choice must be explicit.
 - Linux MKL configurations use the exact selected pkg-config profile. No
   `MKLROOT` environment variable is required.
+
+Test platforms:
+
+- Linux: Fedora 44.
+- macOS: macOS 26 Tahoe.
+- Windows: Windows 11.
 
 ## Build, test, and documentation commands
 
@@ -118,7 +124,7 @@ cargo doc --no-deps --no-default-features -F mkl-dynamic-ilp64-seq
 ```
 
 Do not omit `--no-default-features` when selecting another configuration,
-because the default OpenBLAS configuration would remain enabled.
+because the default FlexiBLAS configuration would remain enabled.
 
 ## Backend linking
 

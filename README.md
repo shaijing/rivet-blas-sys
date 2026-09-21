@@ -6,7 +6,7 @@ This crate provides Rust FFI bindings to CBLAS (C interface to BLAS).
 
 Features describe complete native link configurations. Enable exactly one
 configuration feature; do not combine backend, ABI, static, or threading
-features. The default is `openblas-static-lp64`.
+features. The default is `flexiblas-dynamic-lp64`.
 
 - OpenBLAS: `openblas-{dynamic,static}-{ilp64,lp64}`.
 - FlexiBLAS: `flexiblas-{dynamic,static}-{ilp64,lp64}`.
@@ -47,6 +47,8 @@ cargo test --no-default-features -F openblas-dynamic-lp64
 
 ## Supported Platforms
 
+The test matrix uses Fedora 44 on Linux, macOS 26 Tahoe, and Windows 11.
+
 | BLAS        | Windows | Linux | macOS |
 | :-----------| :------: | :----: | :----: |
 | `intel-mkl` |   ✅    |  ✅   |       |
@@ -58,7 +60,7 @@ cargo test --no-default-features -F openblas-dynamic-lp64
 ## Usage
 
 ```bash
-# Default: OpenBLAS static LP64
+# Default: FlexiBLAS dynamic LP64
 cargo build
 
 # macOS with OpenBLAS (requires pkg-config)

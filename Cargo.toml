@@ -12,7 +12,7 @@ homepage = "https://github.com/shaijing/rivet-blas-sys"
 repository = "https://github.com/shaijing/rivet-blas-sys"
 
 [features]
-default = ["openblas-static-lp64"]
+default = ["flexiblas-dynamic-lp64"]
 
 # OpenBLAS
 openblas-dynamic-ilp64 = []
