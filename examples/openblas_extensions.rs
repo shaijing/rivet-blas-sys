@@ -38,6 +38,8 @@ fn main() {
     unsafe {
         cblas_sgeadd(
             CBlasLayout::CBlasRowMajor,
+            CBlasTranspose::CBlasNoTrans,
+            CBlasTranspose::CBlasNoTrans,
             2 as CBlasInt,
             2 as CBlasInt,
             2.0,

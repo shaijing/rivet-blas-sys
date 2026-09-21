@@ -170,13 +170,16 @@ unsafe extern "C" {
         ldb: CBlasInt,
     );
 
-    /// Computes `C := alpha * A + beta * C` for single-precision matrices.
+    /// Computes `C := alpha * op(A) + beta * op(C)` for single-precision
+    /// matrices.
     ///
     /// # Safety
     /// `a` and `c` must reference valid matrix storage with compatible leading
     /// dimensions; `c` must be writable.
     pub fn cblas_sgeadd(
         layout: CBlasLayout,
+        trans_a: CBlasTranspose,
+        trans_c: CBlasTranspose,
         rows: CBlasInt,
         cols: CBlasInt,
         alpha: CBlasFloat,
@@ -187,13 +190,16 @@ unsafe extern "C" {
         ldc: CBlasInt,
     );
 
-    /// Computes `C := alpha * A + beta * C` for double-precision matrices.
+    /// Computes `C := alpha * op(A) + beta * op(C)` for double-precision
+    /// matrices.
     ///
     /// # Safety
     /// `a` and `c` must reference valid matrix storage with compatible leading
     /// dimensions; `c` must be writable.
     pub fn cblas_dgeadd(
         layout: CBlasLayout,
+        trans_a: CBlasTranspose,
+        trans_c: CBlasTranspose,
         rows: CBlasInt,
         cols: CBlasInt,
         alpha: CBlasDouble,
@@ -204,7 +210,7 @@ unsafe extern "C" {
         ldc: CBlasInt,
     );
 
-    /// Computes `C := alpha * A + beta * C` for complex single-precision
+    /// Computes `C := alpha * op(A) + beta * op(C)` for complex single-precision
     /// matrices.
     ///
     /// # Safety
@@ -212,6 +218,8 @@ unsafe extern "C" {
     /// writable with a compatible leading dimension.
     pub fn cblas_cgeadd(
         layout: CBlasLayout,
+        trans_a: CBlasTranspose,
+        trans_c: CBlasTranspose,
         rows: CBlasInt,
         cols: CBlasInt,
         alpha: *const CBlasVoid,
@@ -222,7 +230,7 @@ unsafe extern "C" {
         ldc: CBlasInt,
     );
 
-    /// Computes `C := alpha * A + beta * C` for complex double-precision
+    /// Computes `C := alpha * op(A) + beta * op(C)` for complex double-precision
     /// matrices.
     ///
     /// # Safety
@@ -230,6 +238,8 @@ unsafe extern "C" {
     /// writable with a compatible leading dimension.
     pub fn cblas_zgeadd(
         layout: CBlasLayout,
+        trans_a: CBlasTranspose,
+        trans_c: CBlasTranspose,
         rows: CBlasInt,
         cols: CBlasInt,
         alpha: *const CBlasVoid,

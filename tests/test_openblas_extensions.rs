@@ -46,6 +46,8 @@ fn openblas_sgeadd_combines_two_matrices() {
     unsafe {
         cblas_sgeadd(
             CBlasLayout::CBlasRowMajor,
+            CBlasTranspose::CBlasNoTrans,
+            CBlasTranspose::CBlasNoTrans,
             2,
             2,
             2.0,
