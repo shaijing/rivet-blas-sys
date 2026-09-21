@@ -5,7 +5,7 @@
 //!     --features flexiblas-static-ilp64 --example static_flexiblas
 //! ```
 
-#[cfg(all(rivet_blas_flexiblas, rivet_blas_static))]
+#[cfg(any(feature = "flexiblas-static-ilp64", feature = "flexiblas-static-lp64"))]
 fn main() {
     use rivet_blas_sys::cblas::prelude::*;
 
@@ -17,7 +17,7 @@ fn main() {
     println!("FlexiBLAS static cblas_ddot: {dot}");
 }
 
-#[cfg(not(all(rivet_blas_flexiblas, rivet_blas_static)))]
+#[cfg(not(any(feature = "flexiblas-static-ilp64", feature = "flexiblas-static-lp64")))]
 fn main() {
     eprintln!("This example requires the `flexiblas-static-*` feature.");
 }

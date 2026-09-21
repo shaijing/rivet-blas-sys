@@ -1,4 +1,13 @@
-#![cfg(any(rivet_blas_openblas, rivet_blas_flexiblas))]
+#![cfg(any(
+    feature = "openblas-dynamic-ilp64",
+    feature = "openblas-dynamic-lp64",
+    feature = "openblas-static-ilp64",
+    feature = "openblas-static-lp64",
+    feature = "flexiblas-dynamic-ilp64",
+    feature = "flexiblas-dynamic-lp64",
+    feature = "flexiblas-static-ilp64",
+    feature = "flexiblas-static-lp64",
+))]
 
 use rivet_blas_sys::cblas::cblas_level_one_openblas::cblas_saxpby;
 use rivet_blas_sys::cblas::cblas_level_three_openblas::{cblas_sgeadd, cblas_somatcopy};
@@ -44,10 +53,34 @@ fn openblas_sgeadd_combines_two_matrices() {
     let mut c = [5.0_f32, 6.0, 7.0, 8.0];
 
     unsafe {
+        #[cfg(any(
+            feature = "openblas-dynamic-ilp64",
+            feature = "openblas-dynamic-lp64",
+            feature = "openblas-static-ilp64",
+            feature = "openblas-static-lp64",
+        ))]
         cblas_sgeadd(
             CBlasLayout::CBlasRowMajor,
             CBlasTranspose::CBlasNoTrans,
             CBlasTranspose::CBlasNoTrans,
+            2,
+            2,
+            2.0,
+            a.as_ptr(),
+            2,
+            3.0,
+            c.as_mut_ptr(),
+            2,
+        );
+
+        #[cfg(any(
+            feature = "flexiblas-dynamic-ilp64",
+            feature = "flexiblas-dynamic-lp64",
+            feature = "flexiblas-static-ilp64",
+            feature = "flexiblas-static-lp64",
+        ))]
+        cblas_sgeadd(
+            CBlasLayout::CBlasRowMajor,
             2,
             2,
             2.0,

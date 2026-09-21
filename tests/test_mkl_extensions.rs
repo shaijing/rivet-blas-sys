@@ -1,4 +1,22 @@
-#![cfg(rivet_blas_mkl)]
+#![cfg(any(
+    feature = "mkl-dynamic-ilp64-gomp",
+    feature = "mkl-dynamic-ilp64-iomp",
+    feature = "mkl-dynamic-ilp64-seq",
+    feature = "mkl-dynamic-ilp64-tbb",
+    feature = "mkl-dynamic-lp64-gomp",
+    feature = "mkl-dynamic-lp64-iomp",
+    feature = "mkl-dynamic-lp64-seq",
+    feature = "mkl-dynamic-lp64-tbb",
+    feature = "mkl-static-ilp64-gomp",
+    feature = "mkl-static-ilp64-iomp",
+    feature = "mkl-static-ilp64-seq",
+    feature = "mkl-static-ilp64-tbb",
+    feature = "mkl-static-lp64-gomp",
+    feature = "mkl-static-lp64-iomp",
+    feature = "mkl-static-lp64-seq",
+    feature = "mkl-static-lp64-tbb",
+    feature = "mkl-sdl",
+))]
 
 use rivet_blas_sys::cblas::cblas_level_one_mkl::cblas_isamin;
 use rivet_blas_sys::cblas::cblas_level_three_mkl::cblas_strmm_oop;

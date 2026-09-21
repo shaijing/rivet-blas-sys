@@ -58,9 +58,8 @@ Backend restrictions:
   complete MKL feature.
 - MKL `*_64` symbols always use `MklCBlasInt64`/`MklCBlasIndex64`, independent
   of the ordinary ABI feature.
-- On Linux, an OpenBLAS dynamic configuration may use an ABI-compatible
-  FlexiBLAS pkg-config package as a compatibility fallback. Use a
-  `flexiblas-*` feature when that choice must be explicit.
+- OpenBLAS and FlexiBLAS configurations link their selected backend; an
+  OpenBLAS configuration never falls back to FlexiBLAS.
 - Linux MKL configurations use the exact selected pkg-config profile. No
   `MKLROOT` environment variable is required.
 

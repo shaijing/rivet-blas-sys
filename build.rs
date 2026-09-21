@@ -625,38 +625,18 @@ fn build_system(config: BuildConfig) {
         } else {
             "openblas"
         };
-        let flexiblas_pkg = if config.abi == Abi::Ilp64 {
-            "flexiblas64"
-        } else {
-            "flexiblas"
-        };
         if config.link == LinkMode::Static {
             probe_static_pkg_config(blas_pkg);
             println!("cargo::warning=pkg_config openblas static used");
         } else {
-            // Try native openblas first
             if pkg_config::Config::new()
                 .statik(false)
                 .probe(blas_pkg)
                 .is_ok()
             {
                 println!("cargo::warning=pkg_config {} used", blas_pkg);
-            }
-            // Fallback to FlexiBLAS (common on Fedora/RHEL)
-            else if pkg_config::Config::new()
-                .statik(false)
-                .probe(flexiblas_pkg)
-                .is_ok()
-            {
-                println!(
-                    "cargo::warning=pkg_config {} used as openblas fallback",
-                    flexiblas_pkg
-                );
             } else {
-                panic!(
-                    "Error: Could not find {} or {} via pkg-config.",
-                    blas_pkg, flexiblas_pkg
-                );
+                panic!("Error: Could not find {} via pkg-config.", blas_pkg);
             }
         }
     } else if config.backend == Backend::Netlib {

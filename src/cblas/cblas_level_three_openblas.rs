@@ -170,8 +170,20 @@ unsafe extern "C" {
         ldb: CBlasInt,
     );
 
+}
+
+// OpenBLAS and FlexiBLAS expose incompatible `geadd` extension ABIs. The
+// OpenBLAS form includes transpose arguments, while FlexiBLAS does not.
+#[cfg(any(
+    docsrs,
+    feature = "openblas-dynamic-ilp64",
+    feature = "openblas-dynamic-lp64",
+    feature = "openblas-static-ilp64",
+    feature = "openblas-static-lp64",
+))]
+unsafe extern "C" {
     /// Computes `C := alpha * op(A) + beta * op(C)` for single-precision
-    /// matrices.
+    /// matrices using OpenBLAS's transpose-aware extension ABI.
     ///
     /// # Safety
     /// `a` and `c` must reference valid matrix storage with compatible leading
@@ -191,7 +203,7 @@ unsafe extern "C" {
     );
 
     /// Computes `C := alpha * op(A) + beta * op(C)` for double-precision
-    /// matrices.
+    /// matrices using OpenBLAS's transpose-aware extension ABI.
     ///
     /// # Safety
     /// `a` and `c` must reference valid matrix storage with compatible leading
@@ -210,8 +222,9 @@ unsafe extern "C" {
         ldc: CBlasInt,
     );
 
-    /// Computes `C := alpha * op(A) + beta * op(C)` for complex single-precision
-    /// matrices.
+    /// Computes `C := alpha * op(A) + beta * op(C)` for complex
+    /// single-precision matrices using OpenBLAS's transpose-aware extension
+    /// ABI.
     ///
     /// # Safety
     /// Complex scalar and matrix pointers must be valid, and `c` must be
@@ -230,8 +243,9 @@ unsafe extern "C" {
         ldc: CBlasInt,
     );
 
-    /// Computes `C := alpha * op(A) + beta * op(C)` for complex double-precision
-    /// matrices.
+    /// Computes `C := alpha * op(A) + beta * op(C)` for complex
+    /// double-precision matrices using OpenBLAS's transpose-aware extension
+    /// ABI.
     ///
     /// # Safety
     /// Complex scalar and matrix pointers must be valid, and `c` must be
@@ -240,6 +254,89 @@ unsafe extern "C" {
         layout: CBlasLayout,
         trans_a: CBlasTranspose,
         trans_c: CBlasTranspose,
+        rows: CBlasInt,
+        cols: CBlasInt,
+        alpha: *const CBlasVoid,
+        a: *const CBlasVoid,
+        lda: CBlasInt,
+        beta: *const CBlasVoid,
+        c: *mut CBlasVoid,
+        ldc: CBlasInt,
+    );
+}
+
+#[cfg(all(
+    not(docsrs),
+    any(
+        feature = "flexiblas-dynamic-ilp64",
+        feature = "flexiblas-dynamic-lp64",
+        feature = "flexiblas-static-ilp64",
+        feature = "flexiblas-static-lp64",
+    ),
+))]
+unsafe extern "C" {
+    /// Computes `C := alpha * A + beta * C` for single-precision matrices
+    /// using FlexiBLAS's non-transposing extension ABI.
+    ///
+    /// # Safety
+    /// `a` and `c` must reference valid matrix storage with compatible leading
+    /// dimensions; `c` must be writable.
+    pub fn cblas_sgeadd(
+        layout: CBlasLayout,
+        rows: CBlasInt,
+        cols: CBlasInt,
+        alpha: CBlasFloat,
+        a: *const CBlasFloat,
+        lda: CBlasInt,
+        beta: CBlasFloat,
+        c: *mut CBlasFloat,
+        ldc: CBlasInt,
+    );
+
+    /// Computes `C := alpha * A + beta * C` for double-precision matrices
+    /// using FlexiBLAS's non-transposing extension ABI.
+    ///
+    /// # Safety
+    /// `a` and `c` must reference valid matrix storage with compatible leading
+    /// dimensions; `c` must be writable.
+    pub fn cblas_dgeadd(
+        layout: CBlasLayout,
+        rows: CBlasInt,
+        cols: CBlasInt,
+        alpha: CBlasDouble,
+        a: *const CBlasDouble,
+        lda: CBlasInt,
+        beta: CBlasDouble,
+        c: *mut CBlasDouble,
+        ldc: CBlasInt,
+    );
+
+    /// Computes `C := alpha * A + beta * C` for complex single-precision
+    /// matrices using FlexiBLAS's non-transposing extension ABI.
+    ///
+    /// # Safety
+    /// Complex scalar and matrix pointers must be valid, and `c` must be
+    /// writable with a compatible leading dimension.
+    pub fn cblas_cgeadd(
+        layout: CBlasLayout,
+        rows: CBlasInt,
+        cols: CBlasInt,
+        alpha: *const CBlasVoid,
+        a: *const CBlasVoid,
+        lda: CBlasInt,
+        beta: *const CBlasVoid,
+        c: *mut CBlasVoid,
+        ldc: CBlasInt,
+    );
+
+    /// Computes `C := alpha * A + beta * C` for complex double-precision
+    /// matrices using FlexiBLAS's non-transposing extension ABI.
+    ///
+    /// # Safety
+    /// Complex scalar and matrix pointers must be valid, and `c` must be
+    /// writable with a compatible leading dimension.
+    pub fn cblas_zgeadd(
+        layout: CBlasLayout,
         rows: CBlasInt,
         cols: CBlasInt,
         alpha: *const CBlasVoid,

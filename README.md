@@ -30,11 +30,14 @@ Backend-specific extensions are kept out of the common modules:
 - `cblas_level_one_openblas` and `cblas_level_three_openblas` contain
   OpenBLAS/FlexiBLAS extensions.
 
-On Linux, an OpenBLAS dynamic configuration may use an ABI-compatible
-FlexiBLAS package as a compatibility fallback when the OpenBLAS pkg-config
-package is unavailable; use a `flexiblas-*` feature when that backend choice
-should be explicit. Do not use `--all-features` for a normal build, because
-configuration features are intentionally mutually exclusive.
+The non-standard `cblas_*geadd` extension has backend-specific ABIs: the
+OpenBLAS form accepts transpose arguments, while the FlexiBLAS form does not.
+The Rust declaration selected by the configuration feature matches that
+backend's ABI.
+
+An `openblas-*` configuration links OpenBLAS, while a `flexiblas-*`
+configuration links FlexiBLAS. Do not use `--all-features` for a normal build,
+because configuration features are intentionally mutually exclusive.
 
 When selecting another backend, disable the defaults explicitly, for example:
 
@@ -48,6 +51,14 @@ cargo test --no-default-features -F openblas-dynamic-lp64
 ## Supported Platforms
 
 The test matrix uses Fedora 44 on Linux, macOS 26 Tahoe, and Windows 11.
+
+The Fedora 44 local test environment uses these backend versions:
+
+| Backend | Version |
+| :------ | :------ |
+| FlexiBLAS | 3.5.0 |
+| OpenBLAS | 0.3.29 |
+| Intel oneMKL | 2026.1.0 |
 
 | BLAS        | Windows | Linux | macOS |
 | :-----------| :------: | :----: | :----: |

@@ -1,6 +1,15 @@
 //! Example for OpenBLAS/FlexiBLAS-specific CBLAS extensions.
 
-#[cfg(any(rivet_blas_openblas, rivet_blas_flexiblas))]
+#[cfg(any(
+    feature = "openblas-dynamic-ilp64",
+    feature = "openblas-dynamic-lp64",
+    feature = "openblas-static-ilp64",
+    feature = "openblas-static-lp64",
+    feature = "flexiblas-dynamic-ilp64",
+    feature = "flexiblas-dynamic-lp64",
+    feature = "flexiblas-static-ilp64",
+    feature = "flexiblas-static-lp64",
+))]
 fn main() {
     use rivet_blas_sys::cblas::cblas_level_one_openblas::cblas_saxpby;
     use rivet_blas_sys::cblas::cblas_level_three_openblas::{cblas_sgeadd, cblas_somatcopy};
@@ -36,10 +45,34 @@ fn main() {
 
     let mut combined = [5.0_f32, 6.0, 7.0, 8.0];
     unsafe {
+        #[cfg(any(
+            feature = "openblas-dynamic-ilp64",
+            feature = "openblas-dynamic-lp64",
+            feature = "openblas-static-ilp64",
+            feature = "openblas-static-lp64",
+        ))]
         cblas_sgeadd(
             CBlasLayout::CBlasRowMajor,
             CBlasTranspose::CBlasNoTrans,
             CBlasTranspose::CBlasNoTrans,
+            2 as CBlasInt,
+            2 as CBlasInt,
+            2.0,
+            a.as_ptr(),
+            2,
+            3.0,
+            combined.as_mut_ptr(),
+            2,
+        );
+
+        #[cfg(any(
+            feature = "flexiblas-dynamic-ilp64",
+            feature = "flexiblas-dynamic-lp64",
+            feature = "flexiblas-static-ilp64",
+            feature = "flexiblas-static-lp64",
+        ))]
+        cblas_sgeadd(
+            CBlasLayout::CBlasRowMajor,
             2 as CBlasInt,
             2 as CBlasInt,
             2.0,
@@ -54,7 +87,16 @@ fn main() {
     println!("OpenBLAS/FlexiBLAS geadd: {combined:?}");
 }
 
-#[cfg(not(any(rivet_blas_openblas, rivet_blas_flexiblas)))]
+#[cfg(not(any(
+    feature = "openblas-dynamic-ilp64",
+    feature = "openblas-dynamic-lp64",
+    feature = "openblas-static-ilp64",
+    feature = "openblas-static-lp64",
+    feature = "flexiblas-dynamic-ilp64",
+    feature = "flexiblas-dynamic-lp64",
+    feature = "flexiblas-static-ilp64",
+    feature = "flexiblas-static-lp64",
+)))]
 fn main() {
     eprintln!("This example requires an `openblas-*` or `flexiblas-*` feature.");
 }

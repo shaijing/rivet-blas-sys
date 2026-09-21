@@ -2,22 +2,7 @@
 //! Requires one complete BLAS configuration feature, such as
 //! `cargo test --no-default-features -F mkl-dynamic-ilp64-seq`.
 
-#[cfg(any(
-    rivet_blas_mkl,
-    rivet_blas_openblas,
-    rivet_blas_flexiblas,
-    rivet_blas_netlib,
-    rivet_blas_accelerate
-))]
 use rivet_blas_sys::cblas::prelude::*;
-
-#[cfg(any(
-    rivet_blas_mkl,
-    rivet_blas_openblas,
-    rivet_blas_flexiblas,
-    rivet_blas_netlib,
-    rivet_blas_accelerate
-))]
 mod level_two {
     use super::*;
 

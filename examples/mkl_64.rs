@@ -1,6 +1,24 @@
 //! Example for Intel MKL's explicit 64-bit CBLAS symbols.
 
-#[cfg(rivet_blas_mkl)]
+#[cfg(any(
+    feature = "mkl-dynamic-ilp64-gomp",
+    feature = "mkl-dynamic-ilp64-iomp",
+    feature = "mkl-dynamic-ilp64-seq",
+    feature = "mkl-dynamic-ilp64-tbb",
+    feature = "mkl-dynamic-lp64-gomp",
+    feature = "mkl-dynamic-lp64-iomp",
+    feature = "mkl-dynamic-lp64-seq",
+    feature = "mkl-dynamic-lp64-tbb",
+    feature = "mkl-static-ilp64-gomp",
+    feature = "mkl-static-ilp64-iomp",
+    feature = "mkl-static-ilp64-seq",
+    feature = "mkl-static-ilp64-tbb",
+    feature = "mkl-static-lp64-gomp",
+    feature = "mkl-static-lp64-iomp",
+    feature = "mkl-static-lp64-seq",
+    feature = "mkl-static-lp64-tbb",
+    feature = "mkl-sdl",
+))]
 fn main() {
     use rivet_blas_sys::cblas::cblas_level_one_mkl_64::cblas_ddot_64;
     use rivet_blas_sys::cblas::cblas_level_three_mkl_64::cblas_dgemm_64;
@@ -37,7 +55,25 @@ fn main() {
     println!("MKL dgemm_64: {c:?}");
 }
 
-#[cfg(not(rivet_blas_mkl))]
+#[cfg(not(any(
+    feature = "mkl-dynamic-ilp64-gomp",
+    feature = "mkl-dynamic-ilp64-iomp",
+    feature = "mkl-dynamic-ilp64-seq",
+    feature = "mkl-dynamic-ilp64-tbb",
+    feature = "mkl-dynamic-lp64-gomp",
+    feature = "mkl-dynamic-lp64-iomp",
+    feature = "mkl-dynamic-lp64-seq",
+    feature = "mkl-dynamic-lp64-tbb",
+    feature = "mkl-static-ilp64-gomp",
+    feature = "mkl-static-ilp64-iomp",
+    feature = "mkl-static-ilp64-seq",
+    feature = "mkl-static-ilp64-tbb",
+    feature = "mkl-static-lp64-gomp",
+    feature = "mkl-static-lp64-iomp",
+    feature = "mkl-static-lp64-seq",
+    feature = "mkl-static-lp64-tbb",
+    feature = "mkl-sdl",
+)))]
 fn main() {
     eprintln!("This example requires an `mkl-*` feature.");
 }

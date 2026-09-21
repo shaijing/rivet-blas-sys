@@ -5,7 +5,16 @@
 //!     --features mkl-static-ilp64-iomp --example static_mkl
 //! ```
 
-#[cfg(all(rivet_blas_mkl, rivet_blas_static))]
+#[cfg(any(
+    feature = "mkl-static-ilp64-gomp",
+    feature = "mkl-static-ilp64-iomp",
+    feature = "mkl-static-ilp64-seq",
+    feature = "mkl-static-ilp64-tbb",
+    feature = "mkl-static-lp64-gomp",
+    feature = "mkl-static-lp64-iomp",
+    feature = "mkl-static-lp64-seq",
+    feature = "mkl-static-lp64-tbb",
+))]
 fn main() {
     use rivet_blas_sys::cblas::prelude::*;
 
@@ -17,7 +26,16 @@ fn main() {
     println!("Intel MKL static cblas_ddot: {dot}");
 }
 
-#[cfg(not(all(rivet_blas_mkl, rivet_blas_static)))]
+#[cfg(not(any(
+    feature = "mkl-static-ilp64-gomp",
+    feature = "mkl-static-ilp64-iomp",
+    feature = "mkl-static-ilp64-seq",
+    feature = "mkl-static-ilp64-tbb",
+    feature = "mkl-static-lp64-gomp",
+    feature = "mkl-static-lp64-iomp",
+    feature = "mkl-static-lp64-seq",
+    feature = "mkl-static-lp64-tbb",
+)))]
 fn main() {
     eprintln!("This example requires an `mkl-static-*-*` feature.");
 }
