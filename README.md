@@ -60,12 +60,19 @@ The Fedora 44 local test environment uses these backend versions:
 | OpenBLAS | 0.3.29 |
 | Intel oneMKL | 2026.1.0 |
 
+The local macOS test environment uses these backend versions:
+
+| Backend | Version |
+| :------ | :------ |
+| Accelerate | 1.11 |
+| OpenBLAS | 0.3.34 |
+
 | BLAS        | Windows | Linux | macOS |
 | :-----------| :------: | :----: | :----: |
 | `intel-mkl` |   ✅    |  ✅   |       |
 | `openblas`  |   ✅    |  ✅   |  ✅   |
 | `flexiblas` |         |  ✅   |       |
-| `netlib`    |   ✅    |  ✅   |  ✅   |
+| `netlib`    |         |       |       |
 | `accelerate`|         |       |  ✅   |
 
 ## Usage
