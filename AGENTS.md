@@ -31,31 +31,38 @@ dimension, layout, and stride requirements.
 
 ## Feature model
 
-The default configuration is `openblas` + `ilp64`.
+The default configuration is `openblas-static-lp64`.
 
-Exactly one integer ABI and exactly one backend must be selected:
+Exactly one complete native configuration feature must be selected. The
+feature name encodes backend, link mode, ABI, and (for MKL) threading:
 
-- ABI: `ilp64` or `lp64`.
-- Backend: `openblas`, `flexiblas`, `intel-mkl`, `netlib`, `accelerate`, or
-  `system-blas`.
-- `system` is a compatibility alias for `system-blas`.
-- `static` requests static linking where supported by the platform/backend.
+- `openblas-{dynamic,static}-{ilp64,lp64}`
+- `flexiblas-{dynamic,static}-{ilp64,lp64}`
+- `mkl-{dynamic,static}-{ilp64,lp64}-{gomp,iomp,seq,tbb}`
+- `mkl-sdl`
+- `netlib-{dynamic,static}-lp64`
+- `accelerate` (macOS LP64)
 
-The crate emits a compile error for conflicting or missing ABI/backend
-features. Do not use `--all-features`; it intentionally enables invalid
-combinations. When selecting a non-default backend, always add
+The build script rejects missing or multiple configuration features. Do not
+use `--all-features` for a normal build; it intentionally enables invalid
+combinations. When selecting a non-default configuration, add
 `--no-default-features`.
 
 Backend restrictions:
 
 - `accelerate` is available only on macOS and supports LP64 only.
+- FlexiBLAS configurations are available only on Linux.
+- Intel MKL configurations are available only on Windows and Linux.
 - `netlib` supports LP64 only in this crate.
-- `intel-mkl` ordinary symbols use `CBlasInt`, selected by `lp64`/`ilp64`.
+- Intel MKL ordinary symbols use `CBlasInt`, selected by the ABI in the
+  complete MKL feature.
 - MKL `*_64` symbols always use `MklCBlasInt64`/`MklCBlasIndex64`, independent
   of the ordinary ABI feature.
-- On Linux, an `openblas` build may use an ABI-compatible FlexiBLAS pkg-config
-  package as a compatibility fallback. Use `flexiblas` when that choice must
-  be explicit.
+- On Linux, an OpenBLAS dynamic configuration may use an ABI-compatible
+  FlexiBLAS pkg-config package as a compatibility fallback. Use a
+  `flexiblas-*` feature when that choice must be explicit.
+- Linux MKL configurations use the exact selected pkg-config profile. No
+  `MKLROOT` environment variable is required.
 
 ## Build, test, and documentation commands
 
@@ -79,48 +86,50 @@ cargo run --release --example blas_levels
 cargo run --release --example openblas_extensions
 cargo bench --no-run
 cargo bench --bench cblas
+
+# Linux static-link smoke tests (requires matching static BLAS installations)
+just static-openblas
+just static-flexiblas
+just static-mkl
 ```
 
 The common feature matrix can be checked with locally installed BLAS
 implementations:
 
 ```bash
-cargo test --no-default-features -F openblas -F lp64
-cargo test --no-default-features -F flexiblas -F ilp64
-cargo test --no-default-features -F flexiblas -F lp64
-cargo test --no-default-features -F system-blas -F lp64
+cargo test --no-default-features -F openblas-dynamic-lp64
+cargo test --no-default-features -F flexiblas-dynamic-ilp64
+cargo test --no-default-features -F flexiblas-dynamic-lp64
 ```
 
-For Intel MKL, set `MKLROOT` and make the MKL runtime libraries visible at
-runtime. The exact compiler runtime path depends on the oneAPI installation:
+For Linux Intel MKL, make the selected MKL pkg-config profile visible to
+`pkg-config` (for example by sourcing oneAPI's environment setup). For dynamic
+MKL, make the MKL runtime libraries visible at runtime. The exact compiler
+runtime path depends on the oneAPI installation:
 
 ```bash
-export MKLROOT=/path/to/intel/oneapi/mkl/latest
-export LD_LIBRARY_PATH="$MKLROOT/lib:/path/to/oneapi/compiler/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+export PKG_CONFIG_PATH=/path/to/intel/oneapi/mkl/latest/lib/pkgconfig
+export LD_LIBRARY_PATH="/path/to/intel/oneapi/mkl/latest/lib:/path/to/oneapi/compiler/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 
-cargo test --no-default-features -F intel-mkl -F ilp64
-cargo test --no-default-features -F intel-mkl -F lp64
-cargo run --release --no-default-features -F intel-mkl -F ilp64 --example mkl_64
-cargo doc --no-deps --no-default-features -F intel-mkl -F ilp64
+cargo test --no-default-features -F mkl-dynamic-ilp64-seq
+cargo test --no-default-features -F mkl-dynamic-lp64-seq
+cargo run --release --no-default-features -F mkl-dynamic-ilp64-seq --example mkl_64
+cargo doc --no-deps --no-default-features -F mkl-dynamic-ilp64-seq
 ```
 
-Do not use `cargo test -F intel-mkl` because the default `openblas` feature
-would remain enabled and the crate rejects multiple backends.
+Do not omit `--no-default-features` when selecting another configuration,
+because the default OpenBLAS configuration would remain enabled.
 
 ## Backend linking
 
 `build.rs` selects libraries according to the target and enabled feature:
 
 - Linux uses pkg-config for `openblas`/`openblas64`,
-  `flexiblas`/`flexiblas64`, and LP64 Netlib `blas`; MKL uses `MKLROOT`.
-- Windows MSVC uses vcpkg or pkg-config for OpenBLAS and `MKLROOT` for MKL.
-- Windows GNU uses pkg-config for OpenBLAS, FlexiBLAS, or Netlib and
-  `MKLROOT` for MKL.
-- macOS can use pkg-config OpenBLAS/FlexiBLAS, the Accelerate framework, or
-  MKL. `accelerate` is LP64-only.
-- `system-blas` probes only ABI-compatible system packages. It must not fall
-  back from ILP64 to an LP64 `blas` package.
-
+  `flexiblas`/`flexiblas64`, LP64 Netlib `blas`, and Intel MKL.
+- Windows MSVC uses vcpkg or pkg-config for OpenBLAS and pkg-config for MKL.
+- Windows GNU uses pkg-config for OpenBLAS, Netlib, and MKL.
+- macOS supports pkg-config OpenBLAS, the Accelerate framework, and Netlib.
+  `accelerate` is LP64-only.
 When adding a backend, update all of the following together:
 
 1. `Cargo.toml` feature definitions and `src/lib.rs` feature validation.

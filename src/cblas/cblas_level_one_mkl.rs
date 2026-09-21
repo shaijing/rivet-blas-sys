@@ -1,8 +1,9 @@
 //! Intel MKL-only Level 1 CBLAS entry points.
 //!
 //! These unsuffixed symbols use `CBlasInt`, which selects MKL's ordinary
-//! `MKL_INT` ABI through the `lp64` or `ilp64` feature. The explicit MKL
-//! `*_64` symbols are declared in [`super::cblas_level_one_mkl_64`].
+//! `MKL_INT` ABI through the selected `mkl-*-{lp64,ilp64}-*` configuration.
+//! The explicit MKL `*_64` symbols are declared in
+//! [`super::cblas_level_one_mkl_64`].
 //!
 //! # Example
 //!

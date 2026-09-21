@@ -1,7 +1,7 @@
 //! OpenBLAS/FlexiBLAS matrix extension entry points.
 //!
-//! These declarations are available with the `openblas` or `flexiblas`
-//! feature and use the selected ordinary `lp64`/`ilp64` ABI.
+//! These declarations are available with an `openblas-*` or `flexiblas-*`
+//! configuration and use that configuration's ordinary `lp64`/`ilp64` ABI.
 //!
 //! # Example
 //!

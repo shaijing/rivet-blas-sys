@@ -64,7 +64,7 @@ pub fn dgemm(
 }
 
 // cargo run --release --example mat_blas
-// For Intel MKL: cargo run --release --no-default-features -F intel-mkl -F ilp64 --example mat_blas
+// For Intel MKL: cargo run --release --no-default-features -F mkl-dynamic-ilp64-seq --example mat_blas
 fn main() {
     let size = 4;
     let a = vec![1.0; size * size];

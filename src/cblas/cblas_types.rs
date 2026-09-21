@@ -1,21 +1,59 @@
 /// Integer type used by the selected backend's ordinary CBLAS entry points.
 ///
-/// `ilp64` maps to `long long` and `lp64` maps to `int`. For Intel MKL this
-/// corresponds to `MKL_INT` with and without `MKL_ILP64`, respectively.
-#[cfg(all(feature = "ilp64", not(feature = "lp64")))]
+/// The selected complete configuration's `ilp64` ABI maps to `long long` and
+/// its `lp64` ABI maps to `int`. For Intel MKL this corresponds to `MKL_INT`
+/// with and without `MKL_ILP64`, respectively.
+#[cfg(any(
+    docsrs,
+    all(
+        not(docsrs),
+        any(
+            feature = "openblas-dynamic-ilp64",
+            feature = "openblas-static-ilp64",
+            feature = "flexiblas-dynamic-ilp64",
+            feature = "flexiblas-static-ilp64",
+            feature = "mkl-dynamic-ilp64-gomp",
+            feature = "mkl-dynamic-ilp64-iomp",
+            feature = "mkl-dynamic-ilp64-seq",
+            feature = "mkl-dynamic-ilp64-tbb",
+            feature = "mkl-static-ilp64-gomp",
+            feature = "mkl-static-ilp64-iomp",
+            feature = "mkl-static-ilp64-seq",
+            feature = "mkl-static-ilp64-tbb",
+            feature = "mkl-sdl",
+        )
+    )
+))]
 pub type CBlasInt = ::std::os::raw::c_longlong;
-#[cfg(all(feature = "lp64", not(feature = "ilp64")))]
+#[cfg(any(all(
+    not(docsrs),
+    any(
+        feature = "openblas-dynamic-lp64",
+        feature = "openblas-static-lp64",
+        feature = "flexiblas-dynamic-lp64",
+        feature = "flexiblas-static-lp64",
+        feature = "mkl-dynamic-lp64-gomp",
+        feature = "mkl-dynamic-lp64-iomp",
+        feature = "mkl-dynamic-lp64-seq",
+        feature = "mkl-dynamic-lp64-tbb",
+        feature = "mkl-static-lp64-gomp",
+        feature = "mkl-static-lp64-iomp",
+        feature = "mkl-static-lp64-seq",
+        feature = "mkl-static-lp64-tbb",
+        feature = "netlib-dynamic-lp64",
+        feature = "netlib-static-lp64",
+        feature = "accelerate",
+    )
+)))]
 pub type CBlasInt = ::std::os::raw::c_int;
-#[cfg(all(docsrs, feature = "ilp64", feature = "lp64"))]
-pub type CBlasInt = ::std::os::raw::c_longlong;
 
 /// Return/index type used by CBLAS (`size_t` for the ordinary MKL API).
 pub type CBlasIndex = usize;
 
 /// Integer types used by Intel MKL's explicit `*_64` CBLAS interface.
 ///
-/// These aliases are intentionally independent of the `lp64`/`ilp64` feature:
-/// MKL's suffixed interface always uses `MKL_INT64` and `MKL_UINT64`.
+/// These aliases are intentionally independent of the selected configuration's
+/// ABI: MKL's suffixed interface always uses `MKL_INT64` and `MKL_UINT64`.
 pub type MklCBlasInt64 = ::std::os::raw::c_longlong;
 pub type MklCBlasIndex64 = ::std::os::raw::c_ulonglong;
 

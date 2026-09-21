@@ -1,4 +1,4 @@
-#![cfg(feature = "intel-mkl")]
+#![cfg(rivet_blas_mkl)]
 
 use rivet_blas_sys::cblas::cblas_level_one_mkl::cblas_isamin;
 use rivet_blas_sys::cblas::cblas_level_three_mkl::cblas_strmm_oop;

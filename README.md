@@ -4,17 +4,25 @@ This crate provides Rust FFI bindings to CBLAS (C interface to BLAS).
 
 ## Features
 
-- ABI features: `ilp64` (default) or `lp64` — exactly one is required.
-- Backend features: `openblas` (default), `flexiblas`, `intel-mkl`, `netlib`,
-  `accelerate`, or `system-blas` — exactly one is required.
-- `system` is a backwards-compatible alias for `system-blas`.
-- `static` requests static linking where the platform and backend support it.
+Features describe complete native link configurations. Enable exactly one
+configuration feature; do not combine backend, ABI, static, or threading
+features. The default is `openblas-static-lp64`.
 
-Enable exactly one of `ilp64` and `lp64`. Ordinary `cblas_*` functions use the
-selected ABI. Intel MKL's explicit 64-bit symbols are exposed separately under
+- OpenBLAS: `openblas-{dynamic,static}-{ilp64,lp64}`.
+- FlexiBLAS: `flexiblas-{dynamic,static}-{ilp64,lp64}`.
+- Intel oneMKL: `mkl-{dynamic,static}-{ilp64,lp64}-{gomp,iomp,seq,tbb}`.
+- Intel oneMKL SDL: `mkl-sdl` (the oneAPI SDL runtime configuration, using the
+  ILP64 ordinary ABI in this crate).
+- Netlib: `netlib-{dynamic,static}-lp64`.
+- Apple Accelerate: `accelerate` (macOS LP64).
+
+FlexiBLAS is supported only on Linux. Intel oneMKL is supported only on
+Windows and Linux.
+
+Ordinary `cblas_*` functions use the ABI encoded by the selected feature.
+Intel MKL's explicit 64-bit symbols are exposed separately under
 `cblas_level_one_mkl_64`, `cblas_level_two_mkl_64`, and
-`cblas_level_three_mkl_64`, and always use `MKL_INT64`/`MKL_UINT64` regardless
-of the selected ordinary ABI.
+`cblas_level_three_mkl_64`, and always use `MKL_INT64`/`MKL_UINT64`.
 
 Backend-specific extensions are kept out of the common modules:
 
@@ -22,19 +30,19 @@ Backend-specific extensions are kept out of the common modules:
 - `cblas_level_one_openblas` and `cblas_level_three_openblas` contain
   OpenBLAS/FlexiBLAS extensions.
 
-The default feature set is `openblas` + `ilp64`. On Linux, the `openblas`
-backend may use an ABI-compatible FlexiBLAS package as a compatibility fallback
-when the OpenBLAS pkg-config package is unavailable; use `flexiblas` when that
-backend choice should be explicit. Do not use `--all-features`, because backend
-and ABI features are intentionally mutually exclusive.
+On Linux, an OpenBLAS dynamic configuration may use an ABI-compatible
+FlexiBLAS package as a compatibility fallback when the OpenBLAS pkg-config
+package is unavailable; use a `flexiblas-*` feature when that backend choice
+should be explicit. Do not use `--all-features` for a normal build, because
+configuration features are intentionally mutually exclusive.
 
 When selecting another backend, disable the defaults explicitly, for example:
 
 ```bash
-cargo test --no-default-features -F intel-mkl -F ilp64
-cargo test --no-default-features -F intel-mkl -F lp64
-cargo test --no-default-features -F flexiblas -F ilp64
-cargo test --no-default-features -F openblas -F lp64
+cargo test --no-default-features -F mkl-dynamic-ilp64-seq
+cargo test --no-default-features -F mkl-dynamic-lp64-iomp
+cargo test --no-default-features -F flexiblas-dynamic-ilp64
+cargo test --no-default-features -F openblas-dynamic-lp64
 ```
 
 ## Supported Platforms
@@ -43,34 +51,42 @@ cargo test --no-default-features -F openblas -F lp64
 | :-----------| :------: | :----: | :----: |
 | `intel-mkl` |   ✅    |  ✅   |       |
 | `openblas`  |   ✅    |  ✅   |  ✅   |
-| `flexiblas` |         |  ✅   |  ✅   |
+| `flexiblas` |         |  ✅   |       |
 | `netlib`    |   ✅    |  ✅   |  ✅   |
 | `accelerate`|         |       |  ✅   |
-| `system-blas` | ✅    |  ✅   |  ✅   |
 
 ## Usage
 
 ```bash
-# Default: OpenBLAS with ILP64
+# Default: OpenBLAS static LP64
 cargo build
 
 # macOS with OpenBLAS (requires pkg-config)
-cargo build -F openblas
+cargo build --no-default-features -F openblas-dynamic-lp64
 
 # Linux with explicit FlexiBLAS (requires pkg-config)
-cargo build --no-default-features -F flexiblas -F ilp64
+cargo build --no-default-features -F flexiblas-dynamic-ilp64
 
 # Linux with Intel MKL
-cargo build --no-default-features -F intel-mkl -F ilp64
+cargo build --no-default-features -F mkl-dynamic-ilp64-seq
 
-# Linux with OpenBLAS
-cargo build -F openblas
+# Linux OpenBLAS static-link smoke test (requires an ABI-matching .pc and .a)
+cargo run --release --no-default-features \
+  --features openblas-static-ilp64 --example static_openblas
 
-# Windows with Intel MKL (requires MKLROOT)
-cargo build --no-default-features -F intel-mkl -F ilp64
+# Linux Intel MKL static-link smoke test (requires the MKL pkg-config profile)
+cargo run --release --no-default-features \
+  --features mkl-static-ilp64-iomp --example static_mkl
+
+# Linux FlexiBLAS static-link smoke test (requires an ABI-matching .pc and .a)
+cargo run --release --no-default-features \
+  --features flexiblas-static-ilp64 --example static_flexiblas
+
+# Windows with Intel MKL (requires the matching pkg-config profile)
+cargo build --no-default-features -F mkl-dynamic-lp64-iomp
 
 # Windows with OpenBLAS (requires vcpkg)
-cargo build -F openblas
+cargo build --no-default-features -F openblas-dynamic-lp64
 
 # Run example
 cargo run --release --example mat_blas
@@ -82,10 +98,15 @@ cargo run --release --example blas_levels
 cargo run --release --example openblas_extensions
 
 # Run Intel MKL explicit 64-bit APIs
-cargo run --release --no-default-features -F intel-mkl -F ilp64 --example mkl_64
+cargo run --release --no-default-features -F mkl-dynamic-ilp64-seq --example mkl_64
 
 # Run Criterion benchmarks
 cargo bench --bench cblas
+
+# The static smoke tests above are also available through just.
+just static-openblas
+just static-flexiblas
+just static-mkl
 
 # Locally render all backend API pages like docs.rs
 DOCS_RS=1 RUSTDOCFLAGS="--cfg docsrs" cargo doc --no-deps --all-features
@@ -102,9 +123,10 @@ exactly one ABI and one backend.
 | :--------| :----| :------------ |
 | macOS | Accelerate | None (built-in) |
 | macOS | OpenBLAS | Install via Homebrew: `brew install openblas` |
-| Linux | Intel MKL | Set `MKLROOT` environment variable |
-| Linux | OpenBLAS | Install via package manager |
-| Windows | Intel MKL | Set `MKLROOT` environment variable |
+| Linux | Intel MKL | Expose the selected `mkl-*.pc` profile through `pkg-config` |
+| Linux | OpenBLAS | Install an ABI-matching OpenBLAS static archive and `.pc` file |
+| Linux | FlexiBLAS | Install an ABI-matching FlexiBLAS static archive and `.pc` file |
+| Windows | Intel MKL | Expose the selected `mkl-*.pc` profile through `pkg-config` |
 | Windows | OpenBLAS | Install via vcpkg: `vcpkg install openblas:x64-windows` |
 
 

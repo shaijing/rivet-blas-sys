@@ -1,6 +1,6 @@
 //! Example for Intel MKL's explicit 64-bit CBLAS symbols.
 
-#[cfg(feature = "intel-mkl")]
+#[cfg(rivet_blas_mkl)]
 fn main() {
     use rivet_blas_sys::cblas::cblas_level_one_mkl_64::cblas_ddot_64;
     use rivet_blas_sys::cblas::cblas_level_three_mkl_64::cblas_dgemm_64;
@@ -37,7 +37,7 @@ fn main() {
     println!("MKL dgemm_64: {c:?}");
 }
 
-#[cfg(not(feature = "intel-mkl"))]
+#[cfg(not(rivet_blas_mkl))]
 fn main() {
-    eprintln!("This example requires the `intel-mkl` feature.");
+    eprintln!("This example requires an `mkl-*` feature.");
 }

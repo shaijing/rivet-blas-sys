@@ -55,10 +55,7 @@ fn bench_dgemm(c: &mut Criterion) {
     group.finish();
 }
 
-#[cfg(all(
-    any(feature = "openblas", feature = "flexiblas"),
-    not(feature = "intel-mkl")
-))]
+#[cfg(any(rivet_blas_openblas, rivet_blas_flexiblas))]
 fn bench_openblas_saxpby(c: &mut Criterion) {
     use rivet_blas_sys::cblas::cblas_level_one_openblas::cblas_saxpby;
 
@@ -78,7 +75,7 @@ fn bench_openblas_saxpby(c: &mut Criterion) {
     group.finish();
 }
 
-#[cfg(feature = "intel-mkl")]
+#[cfg(rivet_blas_mkl)]
 fn bench_mkl_dgemm_64(c: &mut Criterion) {
     use rivet_blas_sys::cblas::cblas_level_three_mkl_64::cblas_dgemm_64;
     use rivet_blas_sys::cblas::cblas_types::MklCBlasInt64;
@@ -114,16 +111,13 @@ fn bench_mkl_dgemm_64(c: &mut Criterion) {
     group.finish();
 }
 
-#[cfg(all(
-    any(feature = "openblas", feature = "flexiblas"),
-    not(feature = "intel-mkl")
-))]
+#[cfg(any(rivet_blas_openblas, rivet_blas_flexiblas))]
 criterion_group!(benches, bench_sdot, bench_dgemm, bench_openblas_saxpby);
 
-#[cfg(feature = "intel-mkl")]
+#[cfg(rivet_blas_mkl)]
 criterion_group!(benches, bench_sdot, bench_dgemm, bench_mkl_dgemm_64);
 
-#[cfg(not(any(feature = "openblas", feature = "flexiblas", feature = "intel-mkl")))]
+#[cfg(not(any(rivet_blas_openblas, rivet_blas_flexiblas, rivet_blas_mkl)))]
 criterion_group!(benches, bench_sdot, bench_dgemm);
 
 criterion_main!(benches);

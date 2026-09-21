@@ -1,6 +1,6 @@
 //! Example for OpenBLAS/FlexiBLAS-specific CBLAS extensions.
 
-#[cfg(any(feature = "openblas", feature = "flexiblas"))]
+#[cfg(any(rivet_blas_openblas, rivet_blas_flexiblas))]
 fn main() {
     use rivet_blas_sys::cblas::cblas_level_one_openblas::cblas_saxpby;
     use rivet_blas_sys::cblas::cblas_level_three_openblas::{cblas_sgeadd, cblas_somatcopy};
@@ -52,7 +52,7 @@ fn main() {
     println!("OpenBLAS/FlexiBLAS geadd: {combined:?}");
 }
 
-#[cfg(not(any(feature = "openblas", feature = "flexiblas")))]
+#[cfg(not(any(rivet_blas_openblas, rivet_blas_flexiblas)))]
 fn main() {
-    eprintln!("This example requires the `openblas` or `flexiblas` feature.");
+    eprintln!("This example requires an `openblas-*` or `flexiblas-*` feature.");
 }
