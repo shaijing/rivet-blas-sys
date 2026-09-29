@@ -4,7 +4,7 @@ version = "0.1.1"
 edition = "2024"
 license = "Apache-2.0 OR MIT"
 authors = ["Ling Yu <lingyu.lynn@outlook.com>"]
-description = "The package provides BLAS bindings for Rust."
+description = "Low-level CBLAS and Intel oneMKL Sparse BLAS bindings for Rust."
 readme = "README.md"
 categories = ["science"]
 keywords = ["linear-algebra", "blas"]
@@ -35,6 +35,7 @@ mkl-dynamic-lp64-gomp = []
 mkl-dynamic-lp64-iomp = []
 mkl-dynamic-lp64-seq = []
 mkl-dynamic-lp64-tbb = []
+# SDL's default ordinary interface is LP64; explicit *_64 APIs remain 64-bit.
 mkl-sdl = []
 mkl-static-ilp64-gomp = []
 mkl-static-ilp64-iomp = []

@@ -1,6 +1,7 @@
 # rivet-blas-sys
 
-This crate provides Rust FFI bindings to CBLAS (C interface to BLAS).
+This crate provides low-level Rust FFI bindings to CBLAS (C interface to BLAS)
+and Intel oneMKL Inspector-Executor Sparse BLAS.
 
 ## Features
 
@@ -12,7 +13,7 @@ features. The default is `flexiblas-dynamic-lp64`.
 - FlexiBLAS: `flexiblas-{dynamic,static}-{ilp64,lp64}`.
 - Intel oneMKL: `mkl-{dynamic,static}-{ilp64,lp64}-{gomp,iomp,seq,tbb}`.
 - Intel oneMKL SDL: `mkl-sdl` (the oneAPI SDL runtime configuration, using the
-  ILP64 ordinary ABI in this crate).
+  default LP64 ordinary ABI).
 - Netlib: `netlib-{dynamic,static}-lp64`.
 - Apple Accelerate: `accelerate` (macOS LP64).
 
@@ -29,6 +30,10 @@ Backend-specific extensions are kept out of the common modules:
 - `cblas_level_one_mkl` and `cblas_level_three_mkl` contain Intel MKL-only APIs.
 - `cblas_level_one_openblas` and `cblas_level_three_openblas` contain
   OpenBLAS/FlexiBLAS extensions.
+- `mkl::sparse` contains ordinary Inspector-Executor Sparse BLAS APIs.
+- `mkl::sparse_64` contains actual `mkl_sparse_*_64` symbols, using 64-bit indices
+  independently of the ordinary ABI. These bindings were validated against
+  oneMKL 2026.1; using them requires a version exporting the selected symbols.
 
 The non-standard `cblas_*geadd` extension has backend-specific ABIs: the
 OpenBLAS form accepts transpose arguments, while the FlexiBLAS form does not.
@@ -47,6 +52,68 @@ cargo test --no-default-features -F mkl-dynamic-lp64-iomp
 cargo test --no-default-features -F flexiblas-dynamic-ilp64
 cargo test --no-default-features -F openblas-dynamic-lp64
 ```
+
+## Intel oneMKL Sparse BLAS
+
+Use `rivet_blas_sys::mkl::prelude::*` for ordinary Sparse BLAS declarations and
+types, or import `mkl::sparse_64` explicitly for suffixed entry points. No
+additional feature is needed beyond a complete MKL configuration.
+
+The bindings cover all four scalar precisions (`s`, `d`, `c`, `z`) for CSR,
+CSC, COO, and BSR creation/export; copy, format conversion, ordering, value
+updates, workload hints and optimization; matrix-vector/matrix multiplication,
+triangular solves, addition, and sparse matrix products, including staged
+`sp2m`. Supported format/operation combinations depend on MKL. In particular,
+`update_values` currently supports only full BSR updates with null index arrays;
+use `set_value` to change a single existing entry. Legacy deprecated sparse
+Level 2/3 interfaces and sparse solvers are not included.
+
+All calls are unsafe. Creation borrows the input arrays: keep them alive at
+stable addresses while the handle references them. Ordering and value updates
+can mutate those arrays. Export returns borrowed pointers, never ownership;
+do not free them or use them after their backing storage changes or is destroyed.
+Destroy each successfully created result handle exactly once. Use a single ABI
+for a handle's entire lifetime, including analysis, export, and destruction.
+Full BSR `update_values` can retain the replacement array pointer; keep that
+array alive at a stable address while the handle references it. `copy` currently
+creates an independent deep copy of the entire matrix and ignores its descriptor.
+
+`MklInt` follows the selected LP64/ILP64 interface; `MklInt64` always uses 64 bits.
+Sparse descriptors and enums are distinct from CBLAS enums. Complex scalars
+use `#[repr(C)]` `MklComplex8`/`MklComplex16` structures passed by value.
+
+**SDL ABI correction:** `mkl-sdl` now uses 32-bit ordinary integers to match
+MKL's default LP64 interface, replacing this crate's earlier ILP64 mapping.
+Keep `MKL_INTERFACE_LAYER` unset or set to `LP64` when using ordinary SDL calls;
+do not switch the process runtime to ILP64. Migrate callers needing 64-bit
+ordinary indices to an explicit `mkl-*-ilp64-*` configuration, or use the
+separate `*_64` APIs with 64-bit arrays and handles.
+
+For Linux, expose the matching pkg-config profile and runtime libraries:
+
+```bash
+export PKG_CONFIG_PATH=/opt/intel/oneapi/mkl/latest/lib/pkgconfig
+export LD_LIBRARY_PATH="/opt/intel/oneapi/mkl/latest/lib:/opt/intel/oneapi/compiler/latest/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+
+cargo test --no-default-features -F mkl-dynamic-lp64-seq --test test_mkl_sparse
+cargo test --no-default-features -F mkl-dynamic-ilp64-seq --test test_mkl_sparse
+# Optional Linux audit of all 158 C signatures, layouts, and enum values (GCC/Clang).
+MKL_INCLUDE_DIR=/opt/intel/oneapi/mkl/latest/include \
+  cargo test --no-default-features -F mkl-dynamic-lp64-seq --test test_mkl_sparse_header -- --ignored
+MKL_INCLUDE_DIR=/opt/intel/oneapi/mkl/latest/include \
+  cargo test --no-default-features -F mkl-dynamic-ilp64-seq --test test_mkl_sparse_header -- --ignored
+cargo run --release --no-default-features -F mkl-dynamic-lp64-seq --example mkl_sparse
+cargo bench --no-default-features -F mkl-dynamic-lp64-seq --bench cblas -- mkl/sparse
+```
+
+The sparse tests use independent Rust dense reference calculations for all four
+precisions in both interfaces, covering all bound symbols, transposes, layouts,
+padding, descriptors, format round trips, staged products, and handle lifetimes.
+The opt-in header audit compiles C static assertions without adding a C compiler
+requirement to normal builds. Set `CC` to a GCC-compatible compiler if needed.
+The sparse benchmark measures repeated execution after inspector optimization.
+See the [Intel Sparse BLAS reference](https://www.intel.com/content/www/us/en/docs/onemkl/developer-reference-c/2026-0/inspector-executor-sparse-blas-routines.html)
+for supported operations and format restrictions.
 
 ## Supported Platforms
 
@@ -119,6 +186,9 @@ cargo run --release --example openblas_extensions
 
 # Run Intel MKL explicit 64-bit APIs
 cargo run --release --no-default-features -F mkl-dynamic-ilp64-seq --example mkl_64
+
+# Run Intel MKL ordinary and explicit 64-bit Sparse BLAS
+cargo run --release --no-default-features -F mkl-dynamic-lp64-seq --example mkl_sparse
 
 # Run Criterion benchmarks
 cargo bench --bench cblas

@@ -20,7 +20,6 @@ fn cblas_index_is_pointer_sized() {
     feature = "mkl-static-ilp64-iomp",
     feature = "mkl-static-ilp64-seq",
     feature = "mkl-static-ilp64-tbb",
-    feature = "mkl-sdl"
 ))]
 #[test]
 fn ilp64_uses_64_bit_cblas_integers() {
@@ -40,6 +39,7 @@ fn ilp64_uses_64_bit_cblas_integers() {
     feature = "mkl-static-lp64-iomp",
     feature = "mkl-static-lp64-seq",
     feature = "mkl-static-lp64-tbb",
+    feature = "mkl-sdl",
     feature = "netlib-dynamic-lp64",
     feature = "netlib-static-lp64",
     feature = "accelerate"

@@ -1,5 +1,5 @@
 //! # rivet-blas-sys
-//! The packages provides a BLAS binding.
+//! Low-level CBLAS and Intel oneMKL Sparse BLAS bindings.
 
 //! ## Configuration
 //! The following implementations are available:
@@ -13,3 +13,6 @@
 
 pub mod blas_types;
 pub mod cblas;
+
+#[cfg(any(docsrs, rivet_blas_mkl))]
+pub mod mkl;

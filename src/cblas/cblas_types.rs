@@ -20,7 +20,6 @@
             feature = "mkl-static-ilp64-iomp",
             feature = "mkl-static-ilp64-seq",
             feature = "mkl-static-ilp64-tbb",
-            feature = "mkl-sdl",
         )
     )
 ))]
@@ -40,6 +39,7 @@ pub type CBlasInt = ::std::os::raw::c_longlong;
         feature = "mkl-static-lp64-iomp",
         feature = "mkl-static-lp64-seq",
         feature = "mkl-static-lp64-tbb",
+        feature = "mkl-sdl",
         feature = "netlib-dynamic-lp64",
         feature = "netlib-static-lp64",
         feature = "accelerate",

@@ -197,7 +197,7 @@ const CONFIGS: &[(&str, BuildConfig)] = &[
         "mkl-sdl",
         BuildConfig {
             backend: Backend::IntelMkl,
-            abi: Abi::Ilp64,
+            abi: Abi::Lp64,
             link: LinkMode::Dynamic,
             mkl_threading: MklThreading::Sdl,
         },

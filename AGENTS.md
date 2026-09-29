@@ -6,7 +6,8 @@ This file is the repository guide for coding agents working on
 
 ## Project purpose
 
-`rivet-blas-sys` provides low-level Rust FFI bindings to CBLAS. It does not
+`rivet-blas-sys` provides low-level Rust FFI bindings to CBLAS and Intel oneMKL
+Inspector-Executor Sparse BLAS. It does not
 provide safe matrix abstractions. Every exported BLAS function is an
 `unsafe extern "C"` declaration, so callers must uphold the backend's pointer,
 dimension, layout, and stride requirements.
@@ -24,8 +25,15 @@ dimension, layout, and stride requirements.
 - `src/cblas/cblas_level_*_mkl.rs` — Intel MKL-only ordinary-ABI extensions.
 - `src/cblas/cblas_level_*_mkl_64.rs` — Intel MKL suffixed `*_64` symbols.
 - `src/cblas/cblas_level_*_openblas.rs` — OpenBLAS/FlexiBLAS extensions.
+- `src/mkl/types.rs` — MKL complex scalars, sparse handles, enums, and descriptors.
+- `src/mkl/sparse.rs` — ordinary Inspector-Executor Sparse BLAS declarations.
+- `src/mkl/sparse_64.rs` — actual suffixed `mkl_sparse_*_64` declarations.
 - `build.rs` — platform-specific library discovery and linker configuration.
 - `tests/` — ABI, common Level 1/2/3, and backend-specific integration tests.
+- `tests/support/mkl_sparse_*` — shared ordinary/explicit-64 behavioral cases
+  and independent dense reference calculations for every scalar precision.
+- `tests/test_mkl_sparse_header.rs` — opt-in Linux audit against installed C
+  headers for all sparse signatures, layouts, field offsets, and enum values.
 - `examples/` — runnable common, OpenBLAS/FlexiBLAS, and MKL examples.
 - `benches/cblas.rs` — Criterion benchmarks for common and backend-specific APIs.
 
@@ -58,6 +66,13 @@ Backend restrictions:
   complete MKL feature.
 - MKL `*_64` symbols always use `MklCBlasInt64`/`MklCBlasIndex64`, independent
   of the ordinary ABI feature.
+- `mkl-sdl` uses LP64 ordinary integers to match the runtime's default interface.
+  Keep `MKL_INTERFACE_LAYER` unset or `LP64`; do not select ILP64 at runtime
+  for ordinary SDL declarations. Use a complete ILP64 configuration or explicit
+  `*_64` symbols when 64-bit indices are needed.
+- MKL Sparse BLAS modules use the existing complete MKL configurations and
+  `rivet_blas_mkl` cfg. Their explicit `*_64` symbols were validated on oneMKL
+  2026.1 and require a library version exporting those symbols.
 - OpenBLAS and FlexiBLAS configurations link their selected backend; an
   OpenBLAS configuration never falls back to FlexiBLAS.
 - Linux MKL configurations use the exact selected pkg-config profile. No
@@ -119,6 +134,10 @@ export LD_LIBRARY_PATH="/path/to/intel/oneapi/mkl/latest/lib:/path/to/oneapi/com
 cargo test --no-default-features -F mkl-dynamic-ilp64-seq
 cargo test --no-default-features -F mkl-dynamic-lp64-seq
 cargo run --release --no-default-features -F mkl-dynamic-ilp64-seq --example mkl_64
+cargo test --no-default-features -F mkl-dynamic-lp64-seq --test test_mkl_sparse
+cargo test --no-default-features -F mkl-dynamic-ilp64-seq --test test_mkl_sparse
+cargo run --release --no-default-features -F mkl-dynamic-lp64-seq --example mkl_sparse
+cargo bench --no-default-features -F mkl-dynamic-lp64-seq --bench cblas -- mkl/sparse
 cargo doc --no-deps --no-default-features -F mkl-dynamic-ilp64-seq
 ```
 
@@ -159,7 +178,33 @@ symbol with the same name.
 
 Use `CBlasInt` for ordinary entry points. Use `MklCBlasInt64` only for MKL's
 actual suffixed `*_64` declarations. Complex arguments currently use
-`CBlasVoid` pointers to match the C ABI.
+`CBlasVoid` pointers in CBLAS to match its C ABI. Sparse BLAS instead passes
+`MklComplex8`/`MklComplex16` scalars by value and uses typed complex pointers.
+Its `MklInt` and `MklInt64` aliases map to the ordinary and explicit integer
+types above. Sparse enums must not reuse CBLAS enums with different values.
+
+Keep `mkl_sparse_*` functions in `src/mkl/`, separate from CBLAS modules.
+Creation borrows user arrays; export borrows storage without transferring
+ownership. Document pointer lifetimes and explicit mutations, and keep each
+handle entirely within one ABI, including destruction. `update_values`
+currently supports full BSR updates only and may retain the replacement pointer;
+keep that array alive while referenced. `copy` currently ignores its descriptor
+and makes an independent deep copy. Do not add deprecated legacy
+Sparse BLAS Level 2/3 routines or unsupported header-only APIs.
+
+For sparse changes, run `test_mkl_sparse` under both LP64 and ILP64; also test
+SDL and static configurations when installed. On Linux with GCC/Clang, run the
+header audit separately for LP64 and ILP64, for example:
+
+```bash
+MKL_INCLUDE_DIR=/path/to/oneapi/mkl/latest/include \
+  cargo test --no-default-features -F mkl-dynamic-lp64-seq --test test_mkl_sparse_header -- --ignored
+MKL_INCLUDE_DIR=/path/to/oneapi/mkl/latest/include \
+  cargo test --no-default-features -F mkl-dynamic-ilp64-seq --test test_mkl_sparse_header -- --ignored
+```
+
+The header audit is intentionally ignored by default so ordinary consumers do
+not need a C compiler or headers to run numerical tests.
 
 Every newly added public FFI function should have Rustdoc that explains:
 
