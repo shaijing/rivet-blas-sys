@@ -3,13 +3,21 @@ name = "rivet-blas-sys"
 version = "0.1.1"
 edition = "2024"
 license = "Apache-2.0 OR MIT"
-authors = ["Ling Yu <lingyu.lynn@outlook.com>"]
 description = "Low-level CBLAS and Intel oneMKL Sparse BLAS bindings for Rust."
 readme = "README.md"
 categories = ["science"]
-keywords = ["linear-algebra", "blas"]
+keywords = ["blas", "linear-algebra"]
 homepage = "https://github.com/shaijing/rivet-blas-sys"
 repository = "https://github.com/shaijing/rivet-blas-sys"
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = [
+  "--cfg",
+  "docsrs",
+  "--html-in-header",
+  "assets/katex-header.html",
+]
 
 [features]
 default = ["flexiblas-dynamic-lp64"]
@@ -53,26 +61,17 @@ netlib-static-lp64 = []
 # Apple's Accelerate framework is a complete LP64 configuration.
 accelerate = []
 
+[[bench]]
+harness = false
+name = "cblas"
+
 [dependencies]
-
-[target.'cfg(target_os="windows")'.build-dependencies]
-vcpkg = "0.2.15"
-
-[build-dependencies]
-pkg-config = "0.3.32"
 
 [dev-dependencies]
 criterion = "0.8.2"
 
-[[bench]]
-name = "cblas"
-harness = false
+[build-dependencies]
+pkg-config = "0.3.32"
 
-[package.metadata.docs.rs]
-all-features = true
-rustdoc-args = [
-    "--cfg",
-    "docsrs",
-    "--html-in-header",
-    "assets/katex-header.html",
-]
+[target.'cfg(target_os="windows")'.build-dependencies]
+vcpkg = "0.2.15"
