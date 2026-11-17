@@ -31,8 +31,6 @@ openblas-static-lp64 = []
 # FlexiBLAS
 flexiblas-dynamic-ilp64 = []
 flexiblas-dynamic-lp64 = []
-flexiblas-static-ilp64 = []
-flexiblas-static-lp64 = []
 
 # Intel oneMKL
 mkl-dynamic-ilp64-gomp = []

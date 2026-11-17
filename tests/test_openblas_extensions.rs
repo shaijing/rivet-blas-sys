@@ -5,8 +5,6 @@
     feature = "openblas-static-lp64",
     feature = "flexiblas-dynamic-ilp64",
     feature = "flexiblas-dynamic-lp64",
-    feature = "flexiblas-static-ilp64",
-    feature = "flexiblas-static-lp64",
 ))]
 
 use rivet_blas_sys::cblas::cblas_level_one_openblas::cblas_saxpby;
@@ -76,8 +74,6 @@ fn openblas_sgeadd_combines_two_matrices() {
         #[cfg(any(
             feature = "flexiblas-dynamic-ilp64",
             feature = "flexiblas-dynamic-lp64",
-            feature = "flexiblas-static-ilp64",
-            feature = "flexiblas-static-lp64",
         ))]
         cblas_sgeadd(
             CBlasLayout::CBlasRowMajor,

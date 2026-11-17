@@ -117,8 +117,6 @@ pub mod cblas_level_two_mkl_64;
     feature = "openblas-static-lp64",
     feature = "flexiblas-dynamic-ilp64",
     feature = "flexiblas-dynamic-lp64",
-    feature = "flexiblas-static-ilp64",
-    feature = "flexiblas-static-lp64",
 ))]
 pub mod cblas_level_one_openblas;
 #[cfg(any(
@@ -129,8 +127,6 @@ pub mod cblas_level_one_openblas;
     feature = "openblas-static-lp64",
     feature = "flexiblas-dynamic-ilp64",
     feature = "flexiblas-dynamic-lp64",
-    feature = "flexiblas-static-ilp64",
-    feature = "flexiblas-static-lp64",
 ))]
 pub mod cblas_level_three_openblas;
 
@@ -248,8 +244,6 @@ pub mod prelude {
         feature = "openblas-static-lp64",
         feature = "flexiblas-dynamic-ilp64",
         feature = "flexiblas-dynamic-lp64",
-        feature = "flexiblas-static-ilp64",
-        feature = "flexiblas-static-lp64",
     ))]
     pub use crate::cblas::cblas_level_one_openblas::*;
     #[cfg(any(
@@ -259,8 +253,6 @@ pub mod prelude {
         feature = "openblas-static-lp64",
         feature = "flexiblas-dynamic-ilp64",
         feature = "flexiblas-dynamic-lp64",
-        feature = "flexiblas-static-ilp64",
-        feature = "flexiblas-static-lp64",
     ))]
     pub use crate::cblas::cblas_level_three_openblas::*;
 }

@@ -10,7 +10,7 @@ configuration feature; do not combine backend, ABI, static, or threading
 features. The default is `flexiblas-dynamic-lp64`.
 
 - OpenBLAS: `openblas-{dynamic,static}-{ilp64,lp64}`.
-- FlexiBLAS: `flexiblas-{dynamic,static}-{ilp64,lp64}`.
+- FlexiBLAS: `flexiblas-dynamic-{ilp64,lp64}` (dynamic linking only).
 - Intel oneMKL: `mkl-{dynamic,static}-{ilp64,lp64}-{gomp,iomp,seq,tbb}`.
 - Intel oneMKL SDL: `mkl-sdl` (the oneAPI SDL runtime configuration, using the
   default LP64 ordinary ABI).
@@ -165,10 +165,6 @@ cargo run --release --no-default-features \
 cargo run --release --no-default-features \
   --features mkl-static-ilp64-iomp --example static_mkl
 
-# Linux FlexiBLAS static-link smoke test (requires an ABI-matching .pc and .a)
-cargo run --release --no-default-features \
-  --features flexiblas-static-ilp64 --example static_flexiblas
-
 # Windows with Intel MKL (requires the matching pkg-config profile)
 cargo build --no-default-features -F mkl-dynamic-lp64-iomp
 
@@ -195,7 +191,6 @@ cargo bench --bench cblas
 
 # The static smoke tests above are also available through just.
 just static-openblas
-just static-flexiblas
 just static-mkl
 
 # Locally render all backend API pages like docs.rs
@@ -215,7 +210,7 @@ exactly one ABI and one backend.
 | macOS | OpenBLAS | Install via Homebrew: `brew install openblas` |
 | Linux | Intel MKL | Expose the selected `mkl-*.pc` profile through `pkg-config` |
 | Linux | OpenBLAS | Install an ABI-matching OpenBLAS static archive and `.pc` file |
-| Linux | FlexiBLAS | Install an ABI-matching FlexiBLAS static archive and `.pc` file |
+| Linux | FlexiBLAS | Install ABI-matching FlexiBLAS shared libraries and a `.pc` file |
 | Windows | Intel MKL | Expose the selected `mkl-*.pc` profile through `pkg-config` |
 | Windows | OpenBLAS | Install via vcpkg: `vcpkg install openblas:x64-windows` |
 

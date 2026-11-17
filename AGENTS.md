@@ -45,7 +45,7 @@ Exactly one complete native configuration feature must be selected. The
 feature name encodes backend, link mode, ABI, and (for MKL) threading:
 
 - `openblas-{dynamic,static}-{ilp64,lp64}`
-- `flexiblas-{dynamic,static}-{ilp64,lp64}`
+- `flexiblas-dynamic-{ilp64,lp64}`
 - `mkl-{dynamic,static}-{ilp64,lp64}-{gomp,iomp,seq,tbb}`
 - `mkl-sdl`
 - `netlib-{dynamic,static}-lp64`
@@ -59,7 +59,7 @@ combinations. When selecting a non-default configuration, add
 Backend restrictions:
 
 - `accelerate` is available only on macOS and supports LP64 only.
-- FlexiBLAS configurations are available only on Linux.
+- FlexiBLAS configurations are available only on Linux and support dynamic linking only.
 - Intel MKL configurations are available only on Windows and Linux.
 - `netlib` supports LP64 only in this crate.
 - Intel MKL ordinary symbols use `CBlasInt`, selected by the ABI in the
@@ -109,7 +109,6 @@ cargo bench --bench cblas
 
 # Linux static-link smoke tests (requires matching static BLAS installations)
 just static-openblas
-just static-flexiblas
 just static-mkl
 ```
 

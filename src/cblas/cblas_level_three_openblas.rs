@@ -270,8 +270,6 @@ unsafe extern "C" {
     any(
         feature = "flexiblas-dynamic-ilp64",
         feature = "flexiblas-dynamic-lp64",
-        feature = "flexiblas-static-ilp64",
-        feature = "flexiblas-static-lp64",
     ),
 ))]
 unsafe extern "C" {

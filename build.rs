@@ -104,24 +104,6 @@ const CONFIGS: &[(&str, BuildConfig)] = &[
         },
     ),
     (
-        "flexiblas-static-ilp64",
-        BuildConfig {
-            backend: Backend::Flexiblas,
-            abi: Abi::Ilp64,
-            link: LinkMode::Static,
-            mkl_threading: MklThreading::None,
-        },
-    ),
-    (
-        "flexiblas-static-lp64",
-        BuildConfig {
-            backend: Backend::Flexiblas,
-            abi: Abi::Lp64,
-            link: LinkMode::Static,
-            mkl_threading: MklThreading::None,
-        },
-    ),
-    (
         "mkl-dynamic-ilp64-gomp",
         BuildConfig {
             backend: Backend::IntelMkl,
@@ -610,14 +592,10 @@ fn build_system(config: BuildConfig) {
         } else {
             "flexiblas"
         };
-        if config.link == LinkMode::Static {
-            probe_static_pkg_config(flexiblas_pkg);
-        } else {
-            pkg_config::Config::new()
-                .statik(false)
-                .probe(flexiblas_pkg)
-                .expect("FlexiBLAS not found via pkg-config");
-        }
+        pkg_config::Config::new()
+            .statik(false)
+            .probe(flexiblas_pkg)
+            .expect("FlexiBLAS not found via pkg-config");
         println!("cargo::warning=pkg_config {} used", flexiblas_pkg);
     } else if config.backend == Backend::Openblas {
         let blas_pkg = if config.abi == Abi::Ilp64 {
