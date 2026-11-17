@@ -29,6 +29,7 @@ dimension, layout, and stride requirements.
 - `src/mkl/sparse.rs` — ordinary Inspector-Executor Sparse BLAS declarations.
 - `src/mkl/sparse_64.rs` — actual suffixed `mkl_sparse_*_64` declarations.
 - `build.rs` — platform-specific library discovery and linker configuration.
+- `build_support/openblas.rs` — GEADD header/version ABI detection.
 - `tests/` — ABI, common Level 1/2/3, and backend-specific integration tests.
 - `tests/support/mkl_sparse_*` — shared ordinary/explicit-64 behavioral cases
   and independent dense reference calculations for every scalar precision.
@@ -142,6 +143,19 @@ cargo doc --no-deps --no-default-features -F mkl-dynamic-ilp64-seq
 
 Do not omit `--no-default-features` when selecting another configuration,
 because the default FlexiBLAS configuration would remain enabled.
+
+
+OpenBLAS GEADD changed its C ABI in 0.3.34: `cblas_{s,d,c,z}geadd` gained
+`trans_a` and `trans_c` arguments after `layout`. The build script inspects all
+four declarations in the discovered `cblas.h`; if no header is readable, it
+uses the pkg-config version (0.3.34 is the boundary). Unknown or inconsistent
+header signatures fail the build. FlexiBLAS keeps the non-transposing ABI.
+Headers and libraries must come from the same installation. docs.rs shows the
+new OpenBLAS signature; builds with older OpenBLAS expose the old signature.
+The internal `rivet_blas_geadd_transpose` cfg is local to this crate and its
+tests/examples, not automatically propagated to dependent crates. Applications
+must use the signature matching their selected installation. Detection does
+not execute target binaries and can be used when cross-compiling.
 
 ## Backend linking
 

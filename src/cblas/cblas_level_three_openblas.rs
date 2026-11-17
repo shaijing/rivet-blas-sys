@@ -3,6 +3,14 @@
 //! These declarations are available with an `openblas-*` or `flexiblas-*`
 //! configuration and use that configuration's ordinary `lp64`/`ilp64` ABI.
 //!
+//! GEADD uses a non-transposing signature with OpenBLAS < 0.3.34 and FlexiBLAS.
+//! OpenBLAS >= 0.3.34 adds `trans_a` and `trans_c` after `layout`. The build
+//! script selects the ABI from the installed CBLAS header, falling back to the
+//! pkg-config version when headers are unavailable. Header and linked library
+//! must belong to the same installation. docs.rs displays the newer signature.
+//! The internal cfg used by this crate is not propagated to dependent crates;
+//! callers must use the signature matching their OpenBLAS installation.
+//!
 //! # Example
 //!
 //! ```no_run
@@ -172,15 +180,8 @@ unsafe extern "C" {
 
 }
 
-// OpenBLAS and FlexiBLAS expose incompatible `geadd` extension ABIs. The
-// OpenBLAS form includes transpose arguments, while FlexiBLAS does not.
-#[cfg(any(
-    docsrs,
-    feature = "openblas-dynamic-ilp64",
-    feature = "openblas-dynamic-lp64",
-    feature = "openblas-static-ilp64",
-    feature = "openblas-static-lp64",
-))]
+// OpenBLAS >= 0.3.34 adds transpose arguments. FlexiBLAS retains the old ABI.
+#[cfg(any(docsrs, rivet_blas_geadd_transpose))]
 unsafe extern "C" {
     /// Computes `C := alpha * op(A) + beta * op(C)` for single-precision
     /// matrices using OpenBLAS's transpose-aware extension ABI.
@@ -265,16 +266,10 @@ unsafe extern "C" {
     );
 }
 
-#[cfg(all(
-    not(docsrs),
-    any(
-        feature = "flexiblas-dynamic-ilp64",
-        feature = "flexiblas-dynamic-lp64",
-    ),
-))]
+#[cfg(all(not(docsrs), not(rivet_blas_geadd_transpose)))]
 unsafe extern "C" {
     /// Computes `C := alpha * A + beta * C` for single-precision matrices
-    /// using FlexiBLAS's non-transposing extension ABI.
+    /// using the non-transposing ABI of OpenBLAS < 0.3.34 or FlexiBLAS.
     ///
     /// # Safety
     /// `a` and `c` must reference valid matrix storage with compatible leading
@@ -292,7 +287,7 @@ unsafe extern "C" {
     );
 
     /// Computes `C := alpha * A + beta * C` for double-precision matrices
-    /// using FlexiBLAS's non-transposing extension ABI.
+    /// using the non-transposing ABI of OpenBLAS < 0.3.34 or FlexiBLAS.
     ///
     /// # Safety
     /// `a` and `c` must reference valid matrix storage with compatible leading
@@ -310,7 +305,7 @@ unsafe extern "C" {
     );
 
     /// Computes `C := alpha * A + beta * C` for complex single-precision
-    /// matrices using FlexiBLAS's non-transposing extension ABI.
+    /// matrices using the non-transposing ABI of OpenBLAS < 0.3.34 or FlexiBLAS.
     ///
     /// # Safety
     /// Complex scalar and matrix pointers must be valid, and `c` must be
@@ -328,7 +323,7 @@ unsafe extern "C" {
     );
 
     /// Computes `C := alpha * A + beta * C` for complex double-precision
-    /// matrices using FlexiBLAS's non-transposing extension ABI.
+    /// matrices using the non-transposing ABI of OpenBLAS < 0.3.34 or FlexiBLAS.
     ///
     /// # Safety
     /// Complex scalar and matrix pointers must be valid, and `c` must be

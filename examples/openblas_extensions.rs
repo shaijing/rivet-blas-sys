@@ -43,12 +43,7 @@ fn main() {
 
     let mut combined = [5.0_f32, 6.0, 7.0, 8.0];
     unsafe {
-        #[cfg(any(
-            feature = "openblas-dynamic-ilp64",
-            feature = "openblas-dynamic-lp64",
-            feature = "openblas-static-ilp64",
-            feature = "openblas-static-lp64",
-        ))]
+        #[cfg(rivet_blas_geadd_transpose)]
         cblas_sgeadd(
             CBlasLayout::CBlasRowMajor,
             CBlasTranspose::CBlasNoTrans,
@@ -63,10 +58,7 @@ fn main() {
             2,
         );
 
-        #[cfg(any(
-            feature = "flexiblas-dynamic-ilp64",
-            feature = "flexiblas-dynamic-lp64",
-        ))]
+        #[cfg(not(rivet_blas_geadd_transpose))]
         cblas_sgeadd(
             CBlasLayout::CBlasRowMajor,
             2 as CBlasInt,

@@ -216,6 +216,21 @@ exactly one ABI and one backend.
 
 
 
+
+## OpenBLAS GEADD ABI compatibility
+
+OpenBLAS GEADD changed its C ABI in 0.3.34: `cblas_{s,d,c,z}geadd` gained
+`trans_a` and `trans_c` arguments after `layout`. The build script inspects all
+four declarations in the discovered `cblas.h`; if no header is readable, it
+uses the pkg-config version (0.3.34 is the boundary). Unknown or inconsistent
+header signatures fail the build. FlexiBLAS keeps the non-transposing ABI.
+Headers and libraries must come from the same installation. docs.rs shows the
+new OpenBLAS signature; builds with older OpenBLAS expose the old signature.
+The internal `rivet_blas_geadd_transpose` cfg is local to this crate and its
+tests/examples, not automatically propagated to dependent crates. Applications
+must use the signature matching their selected installation. Detection does
+not execute target binaries and can be used when cross-compiling.
+
 ## Fedora OpenBLAS pkg-config profiles
 
 Fedora packages OpenBLAS libraries separately from FlexiBLAS and omits the

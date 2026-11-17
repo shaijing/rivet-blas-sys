@@ -1,3 +1,6 @@
+#[path = "build_support/openblas.rs"]
+mod openblas;
+
 use std::path::Path;
 
 use std::env;
@@ -303,6 +306,7 @@ fn selected_config() -> BuildConfig {
 fn emit_cfg_checks() {
     for cfg in [
         "rivet_blas_openblas",
+        "rivet_blas_geadd_transpose",
         "rivet_blas_flexiblas",
         "rivet_blas_mkl",
         "rivet_blas_netlib",
@@ -331,6 +335,64 @@ fn emit_internal_cfg(config: BuildConfig) {
     if config.mkl_threading == MklThreading::Sdl {
         println!("cargo:rustc-cfg=rivet_blas_mkl_sdl");
     }
+}
+
+// Metadata is queried without re-emitting linker directives. Never execute a target
+// binary here: header/version detection also works for cross compilation.
+fn detect_openblas_geadd(config: BuildConfig) {
+    let package = if cfg!(target_os = "linux") && config.abi == Abi::Ilp64 {
+        "openblas64"
+    } else {
+        "openblas"
+    };
+    // Match build_system's preference for vcpkg on MSVC, even if an unrelated
+    // pkg-config installation is also available.
+    #[cfg(all(target_os = "windows", target_env = "msvc"))]
+    if let Ok(library) = vcpkg::Config::new()
+        .cargo_metadata(false)
+        .find_package("openblas")
+    {
+        detect_geadd_metadata(library.include_paths, None);
+        return;
+    }
+    let metadata = pkg_config::Config::new()
+        .statik(config.link == LinkMode::Static)
+        .cargo_metadata(false)
+        .probe(package);
+    let library =
+        metadata.unwrap_or_else(|error| panic!("cannot detect OpenBLAS GEADD ABI: {error}"));
+    detect_geadd_metadata(library.include_paths, Some(library.version));
+}
+
+fn detect_geadd_metadata(includes: Vec<std::path::PathBuf>, version: Option<String>) {
+    for include in includes {
+        for header in [include.join("cblas.h"), include.join("openblas/cblas.h")] {
+            println!("cargo:rerun-if-changed={}", header.display());
+            if let Ok(source) = std::fs::read_to_string(&header) {
+                let abi = openblas::header_abi(&source).unwrap_or_else(|error| {
+                    panic!(
+                        "cannot detect OpenBLAS GEADD ABI from {}: {error}",
+                        header.display()
+                    )
+                });
+                emit_geadd_abi(abi, &header.display().to_string());
+                return;
+            }
+        }
+    }
+    let version = version.expect("OpenBLAS headers are required when using vcpkg");
+    let abi = openblas::version_abi(&version).unwrap_or_else(|error| panic!("{error}"));
+    emit_geadd_abi(
+        abi,
+        &format!("pkg-config version {version} (no readable CBLAS header)"),
+    );
+}
+
+fn emit_geadd_abi(abi: openblas::GeaddAbi, source: &str) {
+    if abi == openblas::GeaddAbi::Transpose {
+        println!("cargo:rustc-cfg=rivet_blas_geadd_transpose");
+    }
+    println!("[info] OpenBLAS GEADD ABI: {abi:?}, detected from {source}");
 }
 
 fn mkl_pkg_config_name(config: BuildConfig) -> &'static str {
@@ -380,7 +442,7 @@ fn probe_mkl_pkg_config(config: BuildConfig) -> bool {
     };
 
     if result.is_ok() {
-        println!("cargo::warning=pkg_config {} used for Intel MKL", package);
+        println!("[info] pkg_config {} used for Intel MKL", package);
         true
     } else {
         false
@@ -508,7 +570,7 @@ fn build_system(config: BuildConfig) {
                     mkl_pkg_config_name(config)
                 );
             }
-            println!("cargo::warning=intel-mkl used (msvc via pkg-config)");
+            println!("[info] intel-mkl used (msvc via pkg-config)");
         } else if config.backend == Backend::Openblas {
             if config.link == LinkMode::Static {
                 vcpkg::Config::new()
@@ -517,13 +579,13 @@ fn build_system(config: BuildConfig) {
             } else {
                 unsafe { env::set_var("VCPKGRS_DYNAMIC", "1") };
                 if vcpkg::find_package("openblas").is_ok() {
-                    println!("cargo::warning=vcpkg openblas used");
+                    println!("[info] vcpkg openblas used");
                 } else if pkg_config::Config::new()
                     .statik(false)
                     .probe("openblas")
                     .is_ok()
                 {
-                    println!("cargo::warning=pkg_config openblas used");
+                    println!("[info] pkg_config openblas used");
                 } else {
                     panic!("OpenBLAS not found via vcpkg or pkg-config");
                 }
@@ -534,7 +596,7 @@ fn build_system(config: BuildConfig) {
                 .probe("blas")
                 .is_ok()
             {
-                println!("cargo::warning=pkg_config netlib blas used");
+                println!("[info] pkg_config netlib blas used");
             } else {
                 panic!("Netlib BLAS not found via pkg-config");
             }
@@ -550,14 +612,14 @@ fn build_system(config: BuildConfig) {
                     mkl_pkg_config_name(config)
                 );
             }
-            println!("cargo::warning=intel-mkl used (windows gnu via pkg-config)");
+            println!("[info] intel-mkl used (windows gnu via pkg-config)");
         } else if config.backend == Backend::Openblas {
             if pkg_config::Config::new()
                 .statik(config.link == LinkMode::Static)
                 .probe("openblas")
                 .is_ok()
             {
-                println!("cargo::warning=pkg_config openblas used (windows gnu)");
+                println!("[info] pkg_config openblas used (windows gnu)");
             } else {
                 panic!("OpenBLAS not found via pkg-config (windows gnu)");
             }
@@ -567,7 +629,7 @@ fn build_system(config: BuildConfig) {
                 .probe("blas")
                 .is_ok()
             {
-                println!("cargo::warning=pkg_config netlib blas used (windows gnu)");
+                println!("[info] pkg_config netlib blas used (windows gnu)");
             } else {
                 panic!("Netlib BLAS not found via pkg-config (windows gnu)");
             }
@@ -585,7 +647,7 @@ fn build_system(config: BuildConfig) {
                 mkl_pkg_config_name(config)
             );
         }
-        println!("cargo::warning=intel-mkl used (linux)");
+        println!("[info] intel-mkl used (linux)");
     } else if config.backend == Backend::Flexiblas {
         let flexiblas_pkg = if config.abi == Abi::Ilp64 {
             "flexiblas64"
@@ -596,7 +658,7 @@ fn build_system(config: BuildConfig) {
             .statik(false)
             .probe(flexiblas_pkg)
             .expect("FlexiBLAS not found via pkg-config");
-        println!("cargo::warning=pkg_config {} used", flexiblas_pkg);
+        println!("[info] pkg_config {} used", flexiblas_pkg);
     } else if config.backend == Backend::Openblas {
         let blas_pkg = if config.abi == Abi::Ilp64 {
             "openblas64"
@@ -605,14 +667,14 @@ fn build_system(config: BuildConfig) {
         };
         if config.link == LinkMode::Static {
             probe_static_pkg_config(blas_pkg);
-            println!("cargo::warning=pkg_config openblas static used");
+            println!("[info] pkg_config openblas static used");
         } else {
             if pkg_config::Config::new()
                 .statik(false)
                 .probe(blas_pkg)
                 .is_ok()
             {
-                println!("cargo::warning=pkg_config {} used", blas_pkg);
+                println!("[info] pkg_config {} used", blas_pkg);
             } else {
                 panic!("Error: Could not find {} via pkg-config.", blas_pkg);
             }
@@ -623,7 +685,7 @@ fn build_system(config: BuildConfig) {
             .probe("blas")
             .is_ok()
         {
-            println!("cargo::warning=pkg_config netlib blas used");
+            println!("[info] pkg_config netlib blas used");
         } else {
             panic!("Error: Could not find netlib BLAS via pkg-config.");
         }
@@ -639,33 +701,33 @@ fn build_system(config: BuildConfig) {
                 .statik(true)
                 .probe("openblas")
                 .expect("openblas not found via pkg-config for static linking on macOS");
-            println!("cargo::warning=pkg_config openblas static used (macos)");
+            println!("[info] pkg_config openblas static used (macos)");
         } else if pkg_config::Config::new()
             .statik(false)
             .probe("openblas")
             .is_ok()
         {
-            println!("cargo::warning=pkg_config openblas used (macos)");
+            println!("[info] pkg_config openblas used (macos)");
         } else {
             panic!("Error: Could not find OpenBLAS via pkg-config on macOS.");
         }
     } else if config.backend == Backend::Accelerate {
         println!("cargo:rustc-link-lib=framework=Accelerate");
-        println!("cargo::warning=accelerate framework used (macos)");
+        println!("[info] accelerate framework used (macos)");
     } else if config.backend == Backend::Netlib {
         if pkg_config::Config::new()
             .statik(config.link == LinkMode::Static)
             .probe("blas")
             .is_ok()
         {
-            println!("cargo::warning=pkg_config netlib blas used (macos)");
+            println!("[info] pkg_config netlib blas used (macos)");
         } else {
             panic!("Error: Could not find netlib BLAS via pkg-config on macOS.");
         }
     } else {
         // Default: link against macOS Accelerate framework (includes BLAS)
         println!("cargo:rustc-link-lib=framework=Accelerate");
-        println!("cargo::warning=macos Accelerate framework used (default)");
+        println!("[info] macos Accelerate framework used (default)");
     }
 }
 
@@ -677,6 +739,9 @@ fn build_system(config: BuildConfig) {
 }
 
 fn main() {
+    println!("cargo:rerun-if-changed=build.rs");
+    println!("cargo:rerun-if-changed=build_support/openblas.rs");
+    println!("cargo:rerun-if-env-changed=DOCS_RS");
     // docs.rs renders all feature-gated APIs without linking a native backend.
     if env::var("DOCS_RS").is_ok() {
         emit_cfg_checks();
@@ -701,4 +766,7 @@ fn main() {
 
     // The compiler picks the correct build_system() version based on the target OS.
     build_system(config);
+    if config.backend == Backend::Openblas {
+        detect_openblas_geadd(config);
+    }
 }
