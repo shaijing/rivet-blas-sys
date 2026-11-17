@@ -1,13 +1,12 @@
 [package]
 name = "rivet-blas-sys"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2024"
 license = "Apache-2.0 OR MIT"
 description = "Low-level CBLAS and Intel oneMKL Sparse BLAS bindings for Rust."
 readme = "README.md"
 categories = ["science"]
 keywords = ["blas", "linear-algebra"]
-homepage = "https://github.com/shaijing/rivet-blas-sys"
 repository = "https://github.com/shaijing/rivet-blas-sys"
 
 [package.metadata.docs.rs]
