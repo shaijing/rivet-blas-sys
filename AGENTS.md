@@ -35,7 +35,7 @@ See `Cargo.toml` and README for the full feature matrix and setup commands.
   pkg-config. macOS supports pkg-config OpenBLAS/Netlib and Accelerate.
 - `mkl-sdl` ordinary symbols are LP64: keep `MKL_INTERFACE_LAYER` unset or
   `LP64`. Use an ILP64 configuration or explicit `*_64` symbols for 64-bit indices.
-- Sparse `*_64` symbols were validated on oneMKL 2026.1; require a library
+- Sparse `*_64` symbols were validated on oneMKL 2026.2; require a library
   version exporting them.
 - OpenBLAS GEADD gained two transpose arguments in 0.3.34. Detect the ABI from
   all four header declarations, falling back to the pkg-config version only

@@ -33,7 +33,7 @@ Backend-specific extensions are kept out of the common modules:
 - `mkl::sparse` contains ordinary Inspector-Executor Sparse BLAS APIs.
 - `mkl::sparse_64` contains actual `mkl_sparse_*_64` symbols, using 64-bit indices
   independently of the ordinary ABI. These bindings were validated against
-  oneMKL 2026.1; using them requires a version exporting the selected symbols.
+  oneMKL 2026.2; using them requires a version exporting the selected symbols.
 
 The non-standard `cblas_*geadd` extension has backend-specific ABIs: the
 OpenBLAS form accepts transpose arguments, while the FlexiBLAS form does not.
@@ -125,7 +125,7 @@ The Fedora 44 local test environment uses these backend versions:
 | :------ | :------ |
 | FlexiBLAS | 3.5.0 |
 | OpenBLAS | 0.3.29 |
-| Intel oneMKL | 2026.1.0 |
+| Intel oneMKL | 2026.2.0 |
 
 The local macOS test environment uses these backend versions:
 
