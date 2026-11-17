@@ -20,7 +20,7 @@ rustdoc-args = [
 ]
 
 [features]
-default = ["flexiblas-dynamic-lp64"]
+default = ["openblas-dynamic-lp64"]
 
 # OpenBLAS
 openblas-dynamic-ilp64 = []

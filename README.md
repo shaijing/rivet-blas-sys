@@ -7,7 +7,7 @@ and Intel oneMKL Inspector-Executor Sparse BLAS.
 
 Features describe complete native link configurations. Enable exactly one
 configuration feature; do not combine backend, ABI, static, or threading
-features. The default is `flexiblas-dynamic-lp64`.
+features. The default is `openblas-dynamic-lp64`.
 
 - OpenBLAS: `openblas-{dynamic,static}-{ilp64,lp64}`.
 - FlexiBLAS: `flexiblas-dynamic-{ilp64,lp64}` (dynamic linking only).
