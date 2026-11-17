@@ -216,6 +216,29 @@ exactly one ABI and one backend.
 
 
 
+## Fedora OpenBLAS pkg-config profiles
+
+Fedora packages OpenBLAS libraries separately from FlexiBLAS and omits the
+OpenBLAS `.pc` files. Generate user-local profiles for the installed serial
+LP64 and ILP64 libraries (with ordinary, unsuffixed CBLAS symbols):
+
+```bash
+sudo dnf install openblas-devel openblas-serial openblas-serial64
+# Also install this package for static linking:
+sudo dnf install openblas-static gcc-gfortran
+python3 scripts/fedora-openblas-pc.py
+export PKG_CONFIG_PATH="$HOME/.local/lib/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
+pkg-config --libs --static openblas64
+cargo run --release --no-default-features -F openblas-static-ilp64 --example static_openblas
+```
+
+The script checks the runtime ABI and selects the single-threaded libraries
+`libopenblas` and `libopenblas64`. It adds `OPENBLAS_USE64BITINT` to the ILP64
+C compiler flags and records the Fortran, math, and pthread dependencies for
+static linking. It does not make the entire executable static. Use
+`--output-dir PATH` for another destination, or `--force` to regenerate existing
+profiles. It does not modify system files or install packages.
+
 ## License
 This Rust bindings library is licensed under the MIT or Apache-2.0 license, at your option.
 
